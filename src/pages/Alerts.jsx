@@ -12,26 +12,58 @@ import { acknowledgeAlert, resolveAlert } from "../services/alertServices";
 import AlertGroupList from "../components/alerts/AlertGroupList";
 import { useAlertsData } from "../hooks/useQueryHooks";
 import { LoadingScreen } from "../components/ui";
+import { useRealtimeAlerts } from "../hooks/useRealtimeAlerts";
+import { useAlertCount } from "../hooks/useAlertCount";
 
 const Alerts = () => {
-  // 🆕 REACT QUERY - Auto-polling setiap 30 detik!
+  // ⚡ FIRESTORE REAL-TIME - Top 10 critical alerts
   const {
-    alerts,
+    activeAlerts: realtimeCriticalAlerts,
+    criticalCount,
+    highCount,
+    isListening,
+  } = useRealtimeAlerts(1, {
+    maxAlerts: 10,
+    priorityOnly: true, // Only critical & high
+  });
+
+  // 📊 LIGHTWEIGHT - Total counts (FREE!)
+  const {
+    total: totalAlertCount,
+    active: activeAlertCount,
+    critical: criticalAlertCount,
+  } = useAlertCount(1);
+
+  // 🆕 REACT QUERY - Full alert history (API with pagination)
+  const {
+    alerts: allAlerts,
     stats,
     isLoading: loading,
     error,
-    activeCount,
-    totalCount,
     refetch: refresh,
-  } = useAlertsData(1, true); // enablePolling = true
+  } = useAlertsData(1, false); // Disable polling, use Firestore instead
 
   // Last update time (untuk display)
   const [lastUpdate] = useState(new Date());
-  const isPolling = true; // Always polling with React Query
+  const isPolling = isListening; // Real-time via Firestore
+
   // Local state
   const [filter, setFilter] = useState("all");
   const [parameterFilter, setParameterFilter] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // Combine real-time critical alerts + API historical alerts
+  const alerts =
+    filter === "active"
+      ? [
+          ...realtimeCriticalAlerts,
+          ...allAlerts.filter(
+            (a) =>
+              a.status === "active" &&
+              !realtimeCriticalAlerts.find((r) => r.id === a.id)
+          ),
+        ]
+      : allAlerts;
 
   // Show loading screen on initial load
   if (loading && alerts.length === 0) {
@@ -173,8 +205,8 @@ const Alerts = () => {
         </div>
       )}
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Summary Cards - Real-time counts */}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div className="bg-white shadow-md hover:shadow-lg transition rounded-2xl p-4 flex items-center">
           <div className="flex-shrink-0 rounded-full bg-blue-100 p-4">
             <AlertTriangle className="h-7 w-7 text-blue-600" />
@@ -182,7 +214,23 @@ const Alerts = () => {
           <div className="ml-4">
             <h3 className="text-sm font-medium text-gray-500">Total Alerts</h3>
             <p className="text-2xl font-bold text-gray-900">
-              {loading ? "..." : totalCount}
+              {totalAlertCount || 0}
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5">All time</p>
+          </div>
+        </div>
+
+        <div className="bg-white shadow-md hover:shadow-lg transition rounded-2xl p-4 flex items-center">
+          <div className="flex-shrink-0 rounded-full bg-orange-100 p-4">
+            <AlertTriangle className="h-7 w-7 text-orange-600" />
+          </div>
+          <div className="ml-4">
+            <h3 className="text-sm font-medium text-gray-500">Active Alerts</h3>
+            <p className="text-2xl font-bold text-gray-900">
+              {activeAlertCount || 0}
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              {isListening && <span className="text-green-600">● Live</span>}
             </p>
           </div>
         </div>
@@ -192,10 +240,11 @@ const Alerts = () => {
             <AlertTriangle className="h-7 w-7 text-red-600" />
           </div>
           <div className="ml-4">
-            <h3 className="text-sm font-medium text-gray-500">Active Alerts</h3>
-            <p className="text-2xl font-bold text-gray-900">
-              {loading ? "..." : activeCount}
+            <h3 className="text-sm font-medium text-gray-500">Critical</h3>
+            <p className="text-2xl font-bold text-red-900">
+              {criticalAlertCount || 0}
             </p>
+            <p className="text-xs text-gray-400 mt-0.5">Needs attention</p>
           </div>
         </div>
 
@@ -204,12 +253,11 @@ const Alerts = () => {
             <CheckCircle className="h-7 w-7 text-green-600" />
           </div>
           <div className="ml-4">
-            <h3 className="text-sm font-medium text-gray-500">
-              Resolved Alerts
-            </h3>
+            <h3 className="text-sm font-medium text-gray-500">Resolved</h3>
             <p className="text-2xl font-bold text-gray-900">
               {loading ? "..." : stats?.by_status?.resolved || 0}
             </p>
+            <p className="text-xs text-gray-400 mt-0.5">Completed</p>
           </div>
         </div>
       </div>

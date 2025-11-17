@@ -1,7 +1,7 @@
 // src/pages/Dashboard.jsx
 // 🔥 IMPROVED VERSION - Better Layout, Recommendations, Violations Display
 
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import {
@@ -45,13 +45,15 @@ import DataCard from "../components/ui/DataCard";
 import { getParameterStatus } from "../utils/waterQualityStatus";
 
 // Services
-import dashboardService from "../services/dashboardService";
-import sensorService from "../services/sensorServices";
 import {
   useDashboardSummary,
   useDashboardReadings,
   useSensorReadings,
 } from "../hooks/useQueryHooks";
+
+// 🔥 Firestore Real-time Hooks
+import { useRealtimeLatestReading } from "../hooks/useRealtimeLatestReading";
+import { useAlertCount } from "../hooks/useAlertCount";
 
 // Fix leaflet default icon
 delete L.Icon.Default.prototype._getIconUrl;
@@ -87,7 +89,23 @@ const Dashboard = () => {
   const [currentParamIndex, setCurrentParamIndex] = useState(0);
   const [selectedPeriod, setSelectedPeriod] = useState("week");
 
-  // 🆕 REACT QUERY - Auto-cached & auto-refetch!
+  // ⚡ FIRESTORE REAL-TIME LISTENERS - Instant updates!
+  const {
+    latestReading: realtimeReading,
+    qualityScore: realtimeQualityScore,
+    status: realtimeStatus,
+    violations: realtimeViolations,
+    recommendations: realtimeRecommendations,
+    isListening: isReadingListening,
+  } = useRealtimeLatestReading(currentIpalId);
+
+  // 📊 OPTIMIZED: Get alert counts (FREE - no document reads!)
+  const {
+    active: activeAlertCount, // Used in badge display
+    critical: criticalAlertCount, // Used in badge display
+  } = useAlertCount(currentIpalId);
+
+  // 📊 API CALLS - Historical data (cached)
   const {
     data: dashboardData,
     isLoading: isDashboardLoading,
@@ -198,15 +216,24 @@ const Dashboard = () => {
     }
   };
 
-  // Data processing
-  const latestReading = dashboardData?.latest_reading;
+  // Data processing - Prioritas Firestore real-time, fallback ke API
+  const latestReading = realtimeReading || dashboardData?.latest_reading;
   const currentData =
     selectedPlace && latestReading ? latestReading[selectedPlace] : null;
+
+  // Use real-time data jika tersedia, fallback ke API
   const fuzzyAnalysis = latestReading?.fuzzy_analysis || null;
-  const fuzzyStatus = fuzzyAnalysis?.status || null;
-  const qualityScore = fuzzyAnalysis?.quality_score || 0;
-  const recommendations = fuzzyAnalysis?.recommendations || [];
-  const violations = fuzzyAnalysis?.violations || [];
+  const fuzzyStatus = realtimeStatus || fuzzyAnalysis?.status || null;
+  const qualityScore =
+    realtimeQualityScore || fuzzyAnalysis?.quality_score || 0;
+  const recommendations =
+    realtimeRecommendations?.length > 0
+      ? realtimeRecommendations
+      : fuzzyAnalysis?.recommendations || [];
+  const violations =
+    realtimeViolations?.length > 0
+      ? realtimeViolations
+      : fuzzyAnalysis?.compliance?.violations || [];
 
   // Transform data for chart
   const currentParam = parameters[currentParamIndex];
@@ -399,15 +426,34 @@ const Dashboard = () => {
                     {currentIpal?.ipal_location || "Loading..."}
                   </p>
                   {latestReading?.timestamp && (
-                    <div className="flex items-center mt-2 text-xs text-gray-500">
-                      <Clock className="w-3 h-3 mr-1" />
-                      Last update:{" "}
-                      {new Date(latestReading.timestamp).toLocaleString(
-                        "id-ID",
-                        {
-                          dateStyle: "short",
-                          timeStyle: "short",
-                        }
+                    <div className="flex items-center gap-3 mt-2 text-xs">
+                      <div className="flex items-center text-gray-500">
+                        <Clock className="w-3 h-3 mr-1" />
+                        Last update:{" "}
+                        {new Date(latestReading.timestamp).toLocaleString(
+                          "id-ID",
+                          {
+                            dateStyle: "short",
+                            timeStyle: "short",
+                          }
+                        )}
+                      </div>
+                      {/* Real-time Indicators */}
+                      {isReadingListening && (
+                        <div className="flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 rounded-full border border-green-200">
+                          <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                          <span className="font-medium">Live</span>
+                        </div>
+                      )}
+                      {(criticalAlertCount > 0 || activeAlertCount > 0) && (
+                        <div className="flex items-center gap-1 px-2 py-1 bg-red-50 text-red-700 rounded-full border border-red-200">
+                          <AlertCircle className="w-3 h-3" />
+                          <span className="font-medium">
+                            {criticalAlertCount > 0
+                              ? `${criticalAlertCount} critical`
+                              : `${activeAlertCount} alerts`}
+                          </span>
+                        </div>
                       )}
                     </div>
                   )}
