@@ -21,6 +21,8 @@ const Sensors = () => {
   const { currentIpalId, currentIpal } = useIPAL();
 
   const [sensors, setSensors] = useState([]);
+  const [onlineCount, setOnlineCount] = useState(0);
+  const [offlineCount, setOfflineCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(new Date());
@@ -28,53 +30,20 @@ const Sensors = () => {
   useEffect(() => {
     if (currentIpalId) {
       fetchSensors();
-
-      // Auto-refresh every 30 seconds
-      const interval = setInterval(() => {
-        handleRefresh(true); // silent refresh
-      }, 30000);
-
-      return () => clearInterval(interval);
     }
   }, [currentIpalId]);
 
   const fetchSensors = async () => {
     try {
       setLoading(true);
-      const data = await sensorService.getAllSensors({
+      const result = await sensorService.getAllSensors({
         ipal_id: currentIpalId,
       });
 
-      // Fetch latest reading + mini history untuk setiap sensor
-      const sensorsWithData = await Promise.all(
-        data.map(async (sensor) => {
-          try {
-            const latestData = await sensorService.getSensorLatestReading(
-              sensor.id
-            );
-            const historyData = await sensorService.getSensorHistory(
-              sensor.id,
-              {
-                limit: 10, // Last 10 readings for sparkline
-              }
-            );
-
-            return {
-              ...sensor,
-              latest_reading: latestData.latest_reading,
-              mini_history: historyData.history || [],
-            };
-          } catch (error) {
-            return {
-              ...sensor,
-              latest_reading: null,
-              mini_history: [],
-            };
-          }
-        })
-      );
-
-      setSensors(sensorsWithData);
+      // ✅ Extract sensors and counts from result
+      setSensors(result.sensors || []);
+      setOnlineCount(result.online_count || 0);
+      setOfflineCount(result.offline_count || 0);
       setLastRefresh(new Date());
     } catch (error) {
       console.error("Error fetching sensors:", error);
@@ -123,18 +92,36 @@ const Sensors = () => {
   // NEW: Status Badge with Pulse Animation
   // ========================================
   const SensorStatusBadge = ({ sensor }) => {
-    const timeSinceLastReading = sensor.latest_reading
-      ? new Date() - new Date(sensor.latest_reading.timestamp)
-      : null;
-
-    const isOnline =
-      timeSinceLastReading && timeSinceLastReading < 10 * 60 * 1000; // 10 min
-    const isWarning =
-      timeSinceLastReading && timeSinceLastReading < 30 * 60 * 1000; // 30 min
+    // ✅ USE online_status from backend (already calculated)
+    const isOnline = sensor.online_status === "online";
+    const isWarning = false; // Could be enhanced later
 
     const formatLastSeen = (timestamp) => {
       if (!timestamp) return "No data";
-      const diff = new Date() - new Date(timestamp);
+
+      // Handle Firestore Timestamp object
+      let date;
+      try {
+        if (timestamp?.toDate) {
+          date = timestamp.toDate();
+        } else if (timestamp?.seconds) {
+          date = new Date(timestamp.seconds * 1000);
+        } else if (
+          typeof timestamp === "string" ||
+          typeof timestamp === "number"
+        ) {
+          date = new Date(timestamp);
+        } else {
+          return "No data";
+        }
+
+        if (isNaN(date.getTime())) return "No data";
+      } catch (error) {
+        console.warn("Error parsing timestamp:", timestamp, error);
+        return "No data";
+      }
+
+      const diff = new Date() - date;
       const minutes = Math.floor(diff / 60000);
 
       if (minutes < 1) return "Just now";
@@ -343,16 +330,7 @@ const Sensors = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500">Online</p>
-              <p className="text-2xl font-bold text-green-600">
-                {
-                  sensors.filter((s) => {
-                    const timeDiff = s.latest_reading
-                      ? new Date() - new Date(s.latest_reading.timestamp)
-                      : null;
-                    return timeDiff && timeDiff < 10 * 60 * 1000;
-                  }).length
-                }
-              </p>
+              <p className="text-2xl font-bold text-green-600">{onlineCount}</p>
             </div>
             <div className="p-3 bg-green-100 rounded-lg">
               <MdCheckCircle className="h-6 w-6 text-green-600" />
@@ -463,7 +441,27 @@ const Sensors = () => {
                     <div className="flex items-center justify-between text-xs pt-2 border-t border-gray-100">
                       <span className="text-gray-500 flex items-center">
                         <MdAccessTime className="mr-1" />
-                        {sensor.mini_history.length} readings
+                        {sensor.latest_reading
+                          ? (() => {
+                              try {
+                                let date;
+                                const ts = sensor.latest_reading.timestamp;
+                                if (ts?.toDate) {
+                                  date = ts.toDate();
+                                } else if (ts?.seconds) {
+                                  date = new Date(ts.seconds * 1000);
+                                } else {
+                                  date = new Date(ts);
+                                }
+                                return date.toLocaleTimeString("id-ID", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                });
+                              } catch {
+                                return "No data";
+                              }
+                            })()
+                          : "No data"}
                       </span>
                       <span className="text-primary-600 group-hover:underline flex items-center font-medium">
                         View Details
@@ -471,12 +469,6 @@ const Sensors = () => {
                       </span>
                     </div>
                   </div>
-
-                  {/* Mini Sparkline Chart */}
-                  <MiniSparkline
-                    data={sensor.mini_history.slice().reverse()}
-                    color={sparklineColor}
-                  />
                 </Link>
               );
             })}

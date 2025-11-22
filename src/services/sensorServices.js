@@ -123,13 +123,20 @@ const sensorService = {
 
       console.log("🔍 DEBUG Response:", response);
 
-      // api.get already returns parsed JSON (not response.data)
-      // Backend returns: { success: true, count: 8, data: [...] }
-      const sensors = response.data || [];
+      // Backend returns: { success: true, count: 8, online_count: 5, offline_count: 3, data: [...] }
+      // Return the full response so frontend can access online_count
+      const result = {
+        sensors: response.data || [],
+        count: response.count || 0,
+        online_count: response.online_count || 0,
+        offline_count: response.offline_count || 0,
+      };
 
-      console.log("✅ Sensors fetched:", sensors.length);
+      console.log("✅ Sensors fetched:", result.sensors.length);
+      console.log("   Online:", result.online_count);
+      console.log("   Offline:", result.offline_count);
 
-      return sensors;
+      return result;
     } catch (error) {
       console.error("❌ Failed to fetch sensors:", error.message);
       throw error;
