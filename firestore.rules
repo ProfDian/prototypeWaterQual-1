@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ========================================
+    // WATER QUALITY READINGS (SENSOR DATA)
+    // ========================================
+    // Public read untuk dashboard (monitoring)
+    // Write hanya untuk backend/ESP32 (via service account)
+    match /water_quality_readings/{reading} {
+      // ✅ Public read - siapa saja bisa lihat data monitoring
+      allow read: if true;
+      
+      // ❌ Write HANYA via backend service account
+      // ESP32 mengirim ke backend API, bukan langsung ke Firestore
+      allow write: if false;
+    }
+    
+    // ========================================
+    // ALERTS
+    // ========================================
+    // Public read untuk notifikasi real-time
+    // Write hanya backend
+    match /alerts/{alert} {
+      // ✅ Public read - siapa saja bisa lihat alerts
+      allow read: if true;
+      
+      // ❌ Write HANYA backend
+      allow write: if false;
+    }
+    
+    // ========================================
+    // BUFFER (Internal Backend Only)
+    // ========================================
+    match /readings_buffer/{buffer} {
+      // ❌ Tidak bisa diakses dari frontend
+      allow read, write: if false;
+    }
+    
+    // ========================================
+    // IPALS (IPAL Configuration)
+    // ========================================
+    match /ipals/{ipal} {
+      // ✅ Public read - untuk dropdown IPAL
+      allow read: if true;
+      
+      // ❌ Write HANYA backend admin
+      allow write: if false;
+    }
+    
+    // ========================================
+    // SENSORS (Sensor Registry)
+    // ========================================
+    match /sensors/{sensor} {
+      // ✅ Public read
+      allow read: if true;
+      
+      // ❌ Write HANYA backend
+      allow write: if false;
+    }
+    
+    // ========================================
+    // DEFAULT DENY
+    // ========================================
+    // Semua collection lain: DENY
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

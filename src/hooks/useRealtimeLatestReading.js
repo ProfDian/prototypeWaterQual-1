@@ -39,8 +39,9 @@ export const useRealtimeLatestReading = (ipalId) => {
 
     try {
       // Query: Get latest reading untuk IPAL ini
+      // ✅ FIXED: Gunakan collection yang benar (water_quality_readings)
       const q = query(
-        collection(db, "sensor_readings"),
+        collection(db, "water_quality_readings"),
         where("ipal_id", "==", parseInt(ipalId)),
         orderBy("timestamp", "desc"),
         limit(1)

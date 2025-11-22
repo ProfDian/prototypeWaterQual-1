@@ -29,7 +29,7 @@ import { LoadingScreen } from "../components/ui";
 import { useIPAL } from "../context/IPALContext";
 
 // ⚡ Lazy load heavy components (Charts only - Map components eager loaded to prevent reuse error)
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 const LineChart = lazy(() => import("../components/charts/LineChart"));
 const QualityScoreChart = lazy(() =>
   import("../components/charts/QualityScoreCharts")
@@ -65,22 +65,22 @@ L.Icon.Default.mergeOptions({
   shadowUrl:
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
+// ⭐ MapUpdater Component - Outside Dashboard to avoid re-creation
+const MapUpdater = ({ location }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (location && map) {
+      map.flyTo(location, 18, { duration: 1.2 });
+    }
+  }, [location, map]);
+
+  return null;
+};
 
 // Component to update map position when location changes (moved inside Dashboard to avoid lazy load issues)
 
 const Dashboard = () => {
-  // ⚡ MapUpdater component (needs to be inside because it uses useMap from react-leaflet)
-  const MapUpdaterComponent = ({ location }) => {
-    const { useMap } = require("react-leaflet");
-    const map = useMap();
-    useEffect(() => {
-      if (location) {
-        map.flyTo(location, 18, { duration: 1.2 });
-      }
-    }, [location, map]);
-    return null;
-  };
-
   // ⭐ USE IPAL CONTEXT - Dynamic IPAL ID
   const { currentIpalId, currentIpal, isLoading: isIpalLoading } = useIPAL();
 
@@ -788,7 +788,7 @@ const Dashboard = () => {
                 />
                 {selectedPlace && (
                   <>
-                    <MapUpdaterComponent location={locations[selectedPlace]} />
+                    <MapUpdater location={locations[selectedPlace]} />{" "}
                     <Marker position={locations[selectedPlace]}>
                       <Popup>
                         <div className="text-sm p-2">

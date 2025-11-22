@@ -16,58 +16,55 @@ import { useRealtimeAlerts } from "../hooks/useRealtimeAlerts";
 import { useAlertCount } from "../hooks/useAlertCount";
 
 const Alerts = () => {
-  // ⚡ FIRESTORE REAL-TIME - Top 10 critical alerts
+  // ⚡ FIRESTORE REAL-TIME - ALL alerts with auto-update
   const {
-    activeAlerts: realtimeCriticalAlerts,
+    activeAlerts: realtimeAlerts,
     criticalCount,
     highCount,
     isListening,
+    error: realtimeError,
   } = useRealtimeAlerts(1, {
-    maxAlerts: 10,
-    priorityOnly: true, // Only critical & high
+    maxAlerts: 100, // ✅ Increase limit to get ALL alerts
+    statusFilter: "all", // ✅ Get ALL status (active, acknowledged, resolved)
+    priorityOnly: false, // ✅ Get ALL severity levels
   });
 
-  // 📊 LIGHTWEIGHT - Total counts (FREE!)
+  // 📊 LIGHTWEIGHT - Total counts (FREE - no document reads!)
   const {
     total: totalAlertCount,
     active: activeAlertCount,
     critical: criticalAlertCount,
   } = useAlertCount(1);
 
-  // 🆕 REACT QUERY - Full alert history (API with pagination)
+  // 🆕 REACT QUERY - Only for stats (optional, can be removed)
   const {
-    alerts: allAlerts,
     stats,
-    isLoading: loading,
-    error,
-    refetch: refresh,
-  } = useAlertsData(1, false); // Disable polling, use Firestore instead
+    isLoading: statsLoading,
+    error: apiError,
+    refetch: refreshStats,
+  } = useAlertsData(1, false); // Disable polling
 
-  // Last update time (untuk display)
+  // ✅ USE REAL-TIME DATA directly
+  const alerts = realtimeAlerts;
+  const error = realtimeError || apiError;
+  const loading = !isListening && alerts.length === 0;
+
+  // Last update time (for display)
   const [lastUpdate] = useState(new Date());
-  const isPolling = isListening; // Real-time via Firestore
 
   // Local state
   const [filter, setFilter] = useState("all");
   const [parameterFilter, setParameterFilter] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Combine real-time critical alerts + API historical alerts
-  const alerts =
-    filter === "active"
-      ? [
-          ...realtimeCriticalAlerts,
-          ...allAlerts.filter(
-            (a) =>
-              a.status === "active" &&
-              !realtimeCriticalAlerts.find((r) => r.id === a.id)
-          ),
-        ]
-      : allAlerts;
-
-  // Show loading screen on initial load
-  if (loading && alerts.length === 0) {
-    return <LoadingScreen message="Loading Alerts" icon={AlertTriangle} />;
+  // Show loading screen on initial connection
+  if (loading) {
+    return (
+      <LoadingScreen
+        message="Connecting to real-time alerts..."
+        icon={AlertTriangle}
+      />
+    );
   }
 
   // Filter alerts locally
@@ -85,7 +82,7 @@ const Alerts = () => {
       // Acknowledge all alerts in parallel
       await Promise.all(alertIds.map((id) => acknowledgeAlert(id)));
       console.log(`✅ Acknowledged ${alertIds.length} alerts`);
-      refresh();
+      // No need to refresh - Firestore listener will auto-update!
     } catch (error) {
       console.error("❌ Error acknowledging alerts:", error);
       alert("Failed to acknowledge alerts");
@@ -98,12 +95,21 @@ const Alerts = () => {
       // Resolve all alerts in parallel
       await Promise.all(alertIds.map((id) => resolveAlert(id)));
       console.log(`✅ Resolved ${alertIds.length} alerts`);
-      refresh();
+      // No need to refresh - Firestore listener will auto-update!
     } catch (error) {
       console.error("❌ Error resolving alerts:", error);
       alert("Failed to resolve alerts");
     }
   };
+
+  // Manual refresh (mostly for stats, real-time data auto-updates)
+  const handleRefresh = () => {
+    console.log("🔄 Refreshing stats (alerts are already real-time)");
+    refreshStats();
+  };
+
+  // Calculate resolved count from real-time data
+  const resolvedCount = alerts.filter((a) => a.status === "resolved").length;
 
   return (
     <div className="space-y-6">
@@ -115,7 +121,7 @@ const Alerts = () => {
             <p className="text-sm text-gray-500 mt-1 flex items-center">
               <Clock className="h-4 w-4 mr-1" />
               Last updated: {format(lastUpdate, "HH:mm:ss")}
-              {isPolling && (
+              {isListening && (
                 <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                   <span className="animate-pulse mr-1">●</span> Live
                 </span>
@@ -127,14 +133,14 @@ const Alerts = () => {
         <div className="flex space-x-2">
           {/* Refresh Button */}
           <button
-            onClick={refresh}
-            disabled={loading}
+            onClick={handleRefresh}
+            disabled={statsLoading}
             className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-100 hover:shadow-md transition-all disabled:opacity-50"
           >
             <RefreshCw
-              className={`mr-2 h-5 w-5 ${loading ? "animate-spin" : ""}`}
+              className={`mr-2 h-5 w-5 ${statsLoading ? "animate-spin" : ""}`}
             />
-            Refresh
+            Refresh Stats
           </button>
 
           {/* Filter Button */}
@@ -214,7 +220,7 @@ const Alerts = () => {
           <div className="ml-4">
             <h3 className="text-sm font-medium text-gray-500">Total Alerts</h3>
             <p className="text-2xl font-bold text-gray-900">
-              {totalAlertCount || 0}
+              {totalAlertCount || alerts.length}
             </p>
             <p className="text-xs text-gray-400 mt-0.5">All time</p>
           </div>
@@ -227,7 +233,8 @@ const Alerts = () => {
           <div className="ml-4">
             <h3 className="text-sm font-medium text-gray-500">Active Alerts</h3>
             <p className="text-2xl font-bold text-gray-900">
-              {activeAlertCount || 0}
+              {activeAlertCount ||
+                alerts.filter((a) => a.status === "active").length}
             </p>
             <p className="text-xs text-gray-400 mt-0.5">
               {isListening && <span className="text-green-600">● Live</span>}
@@ -242,7 +249,8 @@ const Alerts = () => {
           <div className="ml-4">
             <h3 className="text-sm font-medium text-gray-500">Critical</h3>
             <p className="text-2xl font-bold text-red-900">
-              {criticalAlertCount || 0}
+              {criticalAlertCount ||
+                alerts.filter((a) => a.severity === "critical").length}
             </p>
             <p className="text-xs text-gray-400 mt-0.5">Needs attention</p>
           </div>
@@ -254,15 +262,15 @@ const Alerts = () => {
           </div>
           <div className="ml-4">
             <h3 className="text-sm font-medium text-gray-500">Resolved</h3>
-            <p className="text-2xl font-bold text-gray-900">
-              {loading ? "..." : stats?.by_status?.resolved || 0}
+            <p className="text-2xl font-bold text-gray-900">{resolvedCount}</p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              {isListening && <span className="text-green-600">● Live</span>}
             </p>
-            <p className="text-xs text-gray-400 mt-0.5">Completed</p>
           </div>
         </div>
       </div>
 
-      {/* ⭐ NEW: Alert Group List */}
+      {/* ⭐ Alert Group List - Using Real-time Data */}
       <AlertGroupList
         alerts={filteredAlerts}
         loading={loading}
