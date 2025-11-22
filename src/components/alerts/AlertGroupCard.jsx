@@ -37,9 +37,12 @@ const AlertGroupCard = ({
     return currentLevel > maxLevel ? alert.severity : max;
   }, "low");
 
-  // Get the most recent timestamp
+  // Get the most recent timestamp from created_at
   const latestTimestamp = alertGroup.alerts.reduce((latest, alert) => {
-    const alertTime = new Date(alert.timestamp);
+    // Handle Firestore Timestamp or Date string
+    const alertTime = alert.created_at?.toDate
+      ? alert.created_at.toDate()
+      : new Date(alert.created_at);
     return alertTime > latest ? alertTime : latest;
   }, new Date(0));
 

@@ -36,13 +36,24 @@ const AlertGroupList = ({
       groups[key].alerts.push(alert);
     });
 
-    // Convert to array and sort by latest timestamp (newest first)
+    // Convert to array and sort by latest created_at (newest first)
     return Object.values(groups).sort((a, b) => {
       const aLatest = Math.max(
-        ...a.alerts.map((alert) => new Date(alert.timestamp).getTime())
+        ...a.alerts.map((alert) => {
+          // Handle Firestore Timestamp or Date string
+          const date = alert.created_at?.toDate
+            ? alert.created_at.toDate()
+            : new Date(alert.created_at);
+          return date.getTime();
+        })
       );
       const bLatest = Math.max(
-        ...b.alerts.map((alert) => new Date(alert.timestamp).getTime())
+        ...b.alerts.map((alert) => {
+          const date = alert.created_at?.toDate
+            ? alert.created_at.toDate()
+            : new Date(alert.created_at);
+          return date.getTime();
+        })
       );
       return bLatest - aLatest;
     });
