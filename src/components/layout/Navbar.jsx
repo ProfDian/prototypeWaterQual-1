@@ -10,10 +10,13 @@ import {
 } from "react-icons/md";
 import { IoMdSettings } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
-import { Bell, BellDot } from "lucide-react";
+import { Bell, BellDot, AlertTriangle } from "lucide-react";
 import authService from "../../services/authServices";
 import LogoutModal from "../ui/LogoutModal";
 import IPALSelector from "../ipal/IPALSelector";
+import { useRealtimeAlerts } from "../../hooks/useRealtimeAlerts";
+import { useIPAL } from "../../context/IPALContext";
+import { format } from "date-fns";
 
 const Navbar = ({ setSidebarOpen }) => {
   const [user, setUser] = useState(null);
@@ -23,6 +26,18 @@ const Navbar = ({ setSidebarOpen }) => {
   const profileMenuRef = useRef(null);
   const notifMenuRef = useRef(null);
   const navigate = useNavigate();
+
+  // Get current IPAL from context
+  const { selectedIPAL } = useIPAL();
+  const ipalId = selectedIPAL || 1;
+
+  // 🔥 Real-time alerts from Firestore
+  const { activeAlerts, alertCount, criticalCount, highCount, isListening } =
+    useRealtimeAlerts(ipalId, {
+      maxAlerts: 5,
+      statusFilter: "active",
+      priorityOnly: true,
+    });
 
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
@@ -128,8 +143,16 @@ const Navbar = ({ setSidebarOpen }) => {
                 className="relative p-2 sm:p-2.5 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 active:scale-95"
                 aria-label="Notifications"
               >
-                <Bell className="w-5 h-5 sm:w-6 sm:h-6" />
-                <span className="absolute top-1 right-1 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-red-500 rounded-full ring-2 ring-white shadow-lg shadow-red-500/30 animate-pulse"></span>
+                {alertCount > 0 ? (
+                  <BellDot className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
+                ) : (
+                  <Bell className="w-5 h-5 sm:w-6 sm:h-6" />
+                )}
+                {alertCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center ring-2 ring-white shadow-lg">
+                    {alertCount > 9 ? "9+" : alertCount}
+                  </span>
+                )}
               </button>
 
               {/* Notifications Dropdown */}
@@ -141,7 +164,16 @@ const Navbar = ({ setSidebarOpen }) => {
                         Notifications
                       </h3>
                       <p className="text-xs text-slate-600 mt-0.5">
-                        3 unread notifications
+                        {alertCount > 0
+                          ? `${alertCount} active alert${
+                              alertCount > 1 ? "s" : ""
+                            }`
+                          : "No active alerts"}
+                        {criticalCount > 0 && (
+                          <span className="ml-1 text-red-600 font-semibold">
+                            ({criticalCount} critical)
+                          </span>
+                        )}
                       </p>
                     </div>
                     <button
@@ -152,32 +184,46 @@ const Navbar = ({ setSidebarOpen }) => {
                     </button>
                   </div>
                   <div className="max-h-[60vh] sm:max-h-[24rem] overflow-y-auto custom-scrollbar">
-                    <NotificationItem
-                      type="alert"
-                      title="High pH Level Detected"
-                      message="Sensor S-001 detected pH level of 8.5"
-                      time="5 minutes ago"
-                      unread
-                    />
-                    <NotificationItem
-                      type="warning"
-                      title="Low Dissolved Oxygen"
-                      message="DO level dropped below 4.0 mg/L"
-                      time="1 hour ago"
-                      unread
-                    />
-                    <NotificationItem
-                      type="info"
-                      title="System Update"
-                      message="Dashboard updated with new features"
-                      time="2 hours ago"
-                    />
+                    {!isListening ? (
+                      <div className="px-4 py-6 text-center text-slate-500 text-sm">
+                        Loading alerts...
+                      </div>
+                    ) : activeAlerts.length === 0 ? (
+                      <div className="px-4 py-6 text-center">
+                        <Bell className="w-12 h-12 text-slate-300 mx-auto mb-2" />
+                        <p className="text-slate-500 text-sm">
+                          No active alerts
+                        </p>
+                        <p className="text-slate-400 text-xs mt-1">
+                          System is running normally
+                        </p>
+                      </div>
+                    ) : (
+                      activeAlerts.map((alert) => (
+                        <NotificationItem
+                          key={alert.id}
+                          alert={alert}
+                          onClick={() => {
+                            setNotifMenuOpen(false);
+                            navigate("/alerts");
+                          }}
+                        />
+                      ))
+                    )}
                   </div>
-                  <div className="px-4 py-3 border-t border-slate-200/80 bg-slate-50/50">
-                    <button className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                      View All Notifications
-                    </button>
-                  </div>
+                  {alertCount > 0 && (
+                    <div className="px-4 py-3 border-t border-slate-200/80 bg-slate-50/50">
+                      <button
+                        onClick={() => {
+                          setNotifMenuOpen(false);
+                          navigate("/alerts");
+                        }}
+                        className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                      >
+                        View All Alerts →
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -284,25 +330,79 @@ const MenuItem = ({ icon, label, onClick }) => (
   </button>
 );
 
-const NotificationItem = ({ type, title, message, time, unread }) => {
+const NotificationItem = ({ alert, onClick }) => {
+  const getSeverityColor = (severity) => {
+    switch (severity) {
+      case "critical":
+        return "text-red-600 bg-red-50";
+      case "high":
+        return "text-orange-600 bg-orange-50";
+      case "medium":
+        return "text-yellow-600 bg-yellow-50";
+      case "low":
+        return "text-blue-600 bg-blue-50";
+      default:
+        return "text-slate-600 bg-slate-50";
+    }
+  };
+
+  const getSeverityIcon = (severity) => {
+    if (severity === "critical" || severity === "high") {
+      return <AlertTriangle className="w-4 h-4" />;
+    }
+    return <Bell className="w-4 h-4" />;
+  };
+
+  const timeAgo = (timestamp) => {
+    if (!timestamp) return "Just now";
+    try {
+      const date = timestamp?.toDate ? timestamp.toDate() : new Date(timestamp);
+      const diff = Date.now() - date.getTime();
+      const minutes = Math.floor(diff / 60000);
+      if (minutes < 1) return "Just now";
+      if (minutes < 60) return `${minutes} min ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours}h ago`;
+      return format(date, "MMM d, HH:mm");
+    } catch (e) {
+      return "Recently";
+    }
+  };
+
   return (
     <div
-      className={`px-4 py-3.5 border-b border-slate-200/80 hover:bg-slate-50/50 transition-colors cursor-pointer ${
-        unread ? "bg-blue-50/30" : ""
-      }`}
+      onClick={onClick}
+      className="px-4 py-3.5 border-b border-slate-200/80 hover:bg-slate-50/50 transition-colors cursor-pointer"
     >
       <div className="flex items-start space-x-3">
         <div
-          className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${
-            unread ? "bg-blue-600 shadow-lg shadow-blue-500/30" : "bg-slate-300"
-          }`}
-        ></div>
+          className={`p-1.5 rounded-lg flex-shrink-0 ${getSeverityColor(
+            alert.severity
+          )}`}
+        >
+          {getSeverityIcon(alert.severity)}
+        </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-slate-900 mb-1">{title}</p>
-          <p className="text-xs text-slate-600 mb-1.5 leading-relaxed">
-            {message}
+          <div className="flex items-center gap-2 mb-1">
+            <p className="text-sm font-semibold text-slate-900 truncate flex-1">
+              {alert.type || "Alert"}
+            </p>
+            <span
+              className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${getSeverityColor(
+                alert.severity
+              )}`}
+            >
+              {alert.severity}
+            </span>
+          </div>
+          <p className="text-xs text-slate-600 mb-1.5 leading-relaxed line-clamp-2">
+            {alert.message ||
+              alert.description ||
+              "Water quality alert detected"}
           </p>
-          <p className="text-[11px] text-slate-500 font-medium">{time}</p>
+          <p className="text-[11px] text-slate-500 font-medium">
+            {timeAgo(alert.created_at)}
+          </p>
         </div>
       </div>
     </div>
