@@ -92,9 +92,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
+    <div className="min-h-screen flex flex-col lg:flex-row relative">
       {/* Left Section - Welcome Banner */}
-      <div className="hidden md:flex md:w-full lg:w-1/2 bg-gradient-to-br from-blue-600 via-cyan-500 to-teal-500 relative overflow-hidden">
+      <div className="hidden md:flex md:w-full lg:w-1/2 bg-gradient-to-br from-blue-500 via-cyan-400 to-sky-500 relative overflow-hidden">
         {/* Background Slideshow */}
         <div className="absolute inset-0">
           {backgroundImages.map((image, index) => (
@@ -108,8 +108,25 @@ const Login = () => {
           ))}
         </div>
 
-        {/* Gradient Overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 via-cyan-800/60 to-teal-700/70"></div>
+        {/* Gradient Overlay - lebih soft dan biru */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/75 via-cyan-500/65 to-sky-600/70"></div>
+
+        {/* Water droplets decoration overlay */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-white/20 rounded-full blur-2xl animate-pulse"></div>
+          <div
+            className="absolute top-32 right-20 w-24 h-24 bg-cyan-200/15 rounded-full blur-xl animate-pulse"
+            style={{ animationDelay: "1s" }}
+          ></div>
+          <div
+            className="absolute bottom-20 left-1/4 w-40 h-40 bg-blue-200/10 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: "2s" }}
+          ></div>
+          <div
+            className="absolute bottom-40 right-1/3 w-28 h-28 bg-white/15 rounded-full blur-2xl animate-pulse"
+            style={{ animationDelay: "0.5s" }}
+          ></div>
+        </div>
 
         {/* Slideshow Indicators */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-2">
