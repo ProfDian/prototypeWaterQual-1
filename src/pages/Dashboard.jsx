@@ -30,6 +30,8 @@ import { useIPAL } from "../context/IPALContext";
 
 // ⚡ Lazy load heavy components (Charts only - Map components eager loaded to prevent reuse error)
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { format, formatDistanceToNow, isValid, parseISO } from "date-fns";
+import { id as localeId } from "date-fns/locale";
 const LineChart = lazy(() => import("../components/charts/LineChart"));
 const QualityScoreChart = lazy(() =>
   import("../components/charts/QualityScoreCharts")
@@ -233,7 +235,7 @@ const Dashboard = () => {
   const violations =
     realtimeViolations?.length > 0
       ? realtimeViolations
-      : fuzzyAnalysis?.compliance?.violations || [];
+      : fuzzyAnalysis?.violations || [];
 
   // Transform data for chart
   const currentParam = parameters[currentParamIndex];

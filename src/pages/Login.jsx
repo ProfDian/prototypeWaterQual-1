@@ -475,19 +475,6 @@ const Login = () => {
                 )}
               </button>
             </form>
-
-            {/* Footer */}
-            <div className="mt-5 md:mt-6 text-center">
-              <p className="text-xs md:text-sm text-gray-600">
-                Don't have an account?{" "}
-                <a
-                  href="#"
-                  className="font-semibold text-cyan-600 hover:text-cyan-700"
-                >
-                  Sign up
-                </a>
-              </p>
-            </div>
           </div>
 
           {/* Copyright */}
