@@ -99,7 +99,7 @@ const StatsOverview = ({
   };
 
   const statusConfig = status ? getStatusConfig(status) : null;
-  const scoreConfig = getScoreConfig(qualityScore);
+  // const scoreConfig = getScoreConfig(qualityScore);
   const StatusIcon = statusConfig?.icon || Minus;
 
   const getTrendIcon = () => {
