@@ -232,7 +232,7 @@ const Login = () => {
 
       {/* Right Section - Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 min-h-screen lg:min-h-0">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-lg">
           {/* Mobile Header - Only visible on small screens */}
           <div className="md:hidden text-center mb-6">
             {/* Undip Logo for Mobile */}
@@ -264,27 +264,32 @@ const Login = () => {
           </div>
 
           {/* Login Card */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-8 border border-white/50">
-            {/* Header */}
-            <div className="mb-6 md:mb-8 text-center">
-              <div className="inline-block mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center shadow-lg">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-8 h-8 text-white"
-                  >
-                    <path d="M12 2C12 2 6 10 6 15a6 6 0 0012 0c0-5-6-13-6-13z" />
-                  </svg>
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sm:p-10 md:p-12 border border-white/50">
+            {/* Header - Horizontal Layout */}
+            <div className="mb-8 md:mb-10">
+              <div className="flex items-center gap-5 md:gap-6 mb-5">
+                {/* Logo */}
+                <div className="flex-shrink-0">
+                  <div className="w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl flex items-center justify-center shadow-xl ring-4 ring-blue-200/50 p-5 md:p-6 transition-all hover:scale-105 hover:shadow-2xl hover:ring-blue-300/60">
+                    <img
+                      src="/LogoIPAL.png"
+                      alt="Logo IPAL"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                </div>
+                {/* Text */}
+                <div className="flex-1">
+                  <h3 className="text-3xl md:text-4xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 mb-2">
+                    Sign In
+                  </h3>
+                  <p className="text-sm md:text-base text-gray-600 leading-relaxed">
+                    Welcome back! Please enter your credentials
+                  </p>
                 </div>
               </div>
-              <h3 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 mb-2">
-                Sign In
-              </h3>
-              <p className="text-sm md:text-base text-gray-600">
-                Welcome back! Please enter your credentials
-              </p>
+              {/* Divider */}
+              <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
             </div>
 
             {/* Error Alert */}
@@ -310,16 +315,16 @@ const Login = () => {
             )}
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
               {/* Email Input */}
               <div>
-                <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm md:text-base font-semibold text-gray-700 mb-2.5">
                   Email Address
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg
-                      className="h-4 w-4 md:h-5 md:w-5 text-gray-400"
+                      className="h-5 w-5 md:h-6 md:w-6 text-gray-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -337,7 +342,7 @@ const Login = () => {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-9 md:pl-10 pr-4 py-2.5 md:py-3 text-sm md:text-base border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                    className="w-full pl-12 md:pl-14 pr-4 py-3.5 md:py-4 text-base md:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                     required
                   />
                 </div>
@@ -345,13 +350,13 @@ const Login = () => {
 
               {/* Password Input */}
               <div>
-                <label className="block text-xs md:text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm md:text-base font-semibold text-gray-700 mb-2.5">
                   Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg
-                      className="h-4 w-4 md:h-5 md:w-5 text-gray-400"
+                      className="h-5 w-5 md:h-6 md:w-6 text-gray-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -369,17 +374,17 @@ const Login = () => {
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-9 md:pl-10 pr-10 md:pr-12 py-2.5 md:py-3 text-sm md:text-base border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                    className="w-full pl-12 md:pl-14 pr-12 md:pr-14 py-3.5 md:py-4 text-base md:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center hover:bg-gray-50 rounded-r-xl transition-colors"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center hover:bg-gray-50 rounded-r-xl transition-colors"
                   >
                     {showPassword ? (
                       <svg
-                        className="h-4 w-4 md:h-5 md:w-5 text-gray-400"
+                        className="h-5 w-5 md:h-6 md:w-6 text-gray-400"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -393,7 +398,7 @@ const Login = () => {
                       </svg>
                     ) : (
                       <svg
-                        className="h-4 w-4 md:h-5 md:w-5 text-gray-400"
+                        className="h-5 w-5 md:h-6 md:w-6 text-gray-400"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -417,20 +422,20 @@ const Login = () => {
               </div>
 
               {/* Remember & Forgot */}
-              <div className="flex items-center justify-between flex-wrap gap-2">
-                <label className="flex items-center">
+              <div className="flex items-center justify-between flex-wrap gap-2 pt-1">
+                <label className="flex items-center cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-3.5 h-3.5 md:w-4 md:h-4 text-cyan-500 border-gray-300 rounded focus:ring-cyan-500"
+                    className="w-4 h-4 md:w-5 md:h-5 text-cyan-500 border-gray-300 rounded focus:ring-cyan-500"
                   />
-                  <span className="ml-2 text-xs md:text-sm text-gray-600">
+                  <span className="ml-2.5 text-sm md:text-base text-gray-600">
                     Remember me
                   </span>
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowForgotModal(true)}
-                  className="text-xs md:text-sm font-medium text-cyan-600 hover:text-cyan-700 transition-colors"
+                  className="text-sm md:text-base font-medium text-cyan-600 hover:text-cyan-700 transition-colors"
                 >
                   Forgot password?
                 </button>
@@ -440,7 +445,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-xl py-3 md:py-3.5 text-sm md:text-base font-semibold shadow-lg transition-all duration-200 ${
+                className={`w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-xl py-4 md:py-4.5 text-base md:text-lg font-semibold shadow-lg transition-all duration-200 ${
                   isLoading
                     ? "opacity-50 cursor-not-allowed"
                     : "hover:shadow-xl hover:scale-[1.02] hover:from-blue-700 hover:to-cyan-600 active:scale-[0.98]"
@@ -449,7 +454,7 @@ const Login = () => {
                 {isLoading ? (
                   <span className="flex items-center justify-center">
                     <svg
-                      className="animate-spin -ml-1 mr-2 md:mr-3 h-4 w-4 md:h-5 md:w-5 text-white"
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 md:h-6 md:w-6 text-white"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
