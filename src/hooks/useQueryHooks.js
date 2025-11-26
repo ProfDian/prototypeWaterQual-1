@@ -33,14 +33,22 @@ export const useDashboardSummary = (ipalId, options = {}) => {
  * Auto-cached 60 detik (sesuai backend)
  */
 export const useDashboardReadings = (ipalId, options = {}) => {
-  const { period = "week", limit = 100, enabled = true } = options;
+  const {
+    period = "week",
+    limit = 100,
+    enabled = true,
+    refetchInterval,
+    refetchOnWindowFocus,
+  } = options;
 
   return useQuery({
     queryKey: ["dashboard", "readings", ipalId, period, limit],
     queryFn: () =>
       dashboardService.getReadingsForChart(ipalId, { period, limit }),
-    staleTime: 60000, // 60 detik
+    staleTime: 30000, // 30 detik - more frequent updates
     enabled: !!ipalId && enabled, // Only fetch if ipalId exists
+    refetchInterval, // Optional auto-refresh
+    refetchOnWindowFocus, // Optional refresh on focus
   });
 };
 
@@ -54,13 +62,22 @@ export const useDashboardReadings = (ipalId, options = {}) => {
  */
 export const useSensorReadings = (filters = {}, options = {}) => {
   const { ipal_id, limit = 50, order = "desc" } = filters;
-  const { enabled = true } = options;
+  const {
+    enabled = true,
+    staleTime = 30000,
+    cacheTime = 60000,
+    refetchInterval,
+    refetchOnWindowFocus,
+  } = options;
 
   return useQuery({
     queryKey: ["sensors", "readings", ipal_id, limit, order],
     queryFn: () => sensorService.getReadings(filters),
-    staleTime: 45000, // 45 detik
+    staleTime, // Use custom staleTime from options
+    cacheTime, // Use custom cacheTime from options
     enabled: !!ipal_id && enabled, // Only fetch if ipal_id exists
+    refetchInterval, // Optional auto-refresh
+    refetchOnWindowFocus, // Optional refresh on focus
   });
 };
 

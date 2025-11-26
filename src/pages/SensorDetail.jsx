@@ -416,7 +416,7 @@ const SensorDetail = () => {
             {history.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Recent Trend (Last 24 hours)
+                  Recent Trend (Last 24 Readings)
                 </h3>
                 <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
                   <LineChart

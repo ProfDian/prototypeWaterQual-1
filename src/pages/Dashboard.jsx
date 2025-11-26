@@ -125,6 +125,8 @@ const Dashboard = () => {
     period: selectedPeriod,
     limit: selectedPeriod === "today" ? 24 : 50,
     enabled: !!currentIpalId,
+    refetchInterval: 60000, // Auto-refresh every 60 seconds
+    refetchOnWindowFocus: true, // Refresh when window regains focus
   });
 
   const {
@@ -134,11 +136,15 @@ const Dashboard = () => {
   } = useSensorReadings(
     {
       ipal_id: currentIpalId,
-      limit: 24,
-      order: "asc",
+      limit: 50,
+      order: "desc",
     },
     {
       enabled: !!selectedPlace && !!currentIpalId, // Hanya fetch jika ada selectedPlace dan IPAL ID
+      staleTime: 30000, // 30 seconds - refresh more frequently
+      cacheTime: 60000, // 1 minute
+      refetchInterval: 60000, // Auto-refresh every 60 seconds
+      refetchOnWindowFocus: true, // Refresh when window regains focus
     }
   );
 
@@ -250,7 +256,8 @@ const Dashboard = () => {
         value: reading[location][currentParam.key],
       };
     })
-    .filter((d) => d !== null);
+    .filter((d) => d !== null)
+    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)); // Sort chronologically
 
   // Calculate summary from quality chart data
   const qualitySummary =
@@ -562,132 +569,176 @@ const Dashboard = () => {
         )}
 
         {/* 🆕 VIOLATIONS & RECOMMENDATIONS SECTION */}
-        {(violations.length > 0 || recommendations.length > 0) && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Violations */}
-            {violations.length > 0 && (
-              <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-red-200/60 overflow-hidden">
-                <div className="p-5 border-b bg-gradient-to-r from-red-50/60 via-orange-50/40 to-cyan-50/30">
-                  <div className="flex items-center space-x-3">
-                    <div className="bg-gradient-to-br from-red-500 to-orange-600 p-2.5 rounded-xl">
-                      <AlertTriangle className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-gray-900 text-lg">
-                        Active Violations
-                      </h3>
-                      <p className="text-xs text-gray-600 mt-0.5">
-                        {violations.length} parameter(s) out of range
-                      </p>
-                    </div>
-                  </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Violations */}
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-red-200/60 overflow-hidden">
+            <div className="p-5 border-b bg-gradient-to-r from-red-50/60 via-orange-50/40 to-cyan-50/30">
+              <div className="flex items-center space-x-3">
+                <div className="bg-gradient-to-br from-red-500 to-orange-600 p-2.5 rounded-xl">
+                  <AlertTriangle className="w-5 h-5 text-white" />
                 </div>
-                <div className="p-5 space-y-3 max-h-[400px] overflow-y-auto">
-                  {violations.map((violation, idx) => {
-                    const config = getPriorityConfig(violation.severity);
-                    const Icon = config.icon;
-                    return (
-                      <div
-                        key={idx}
-                        className={`${config.bg} ${config.border} border rounded-xl p-4 hover:shadow-md transition-shadow`}
-                      >
-                        <div className="flex items-start gap-3">
-                          <Icon
-                            className={`w-5 h-5 ${config.color} flex-shrink-0 mt-0.5`}
-                          />
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="font-semibold text-gray-900">
-                                {violation.parameter}
-                              </span>
+                <div>
+                  <h3 className="font-bold text-gray-900 text-lg">
+                    Active Violations
+                  </h3>
+                  <p className="text-xs text-gray-600 mt-0.5">
+                    {violations.length} parameter(s) out of range
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="p-5 space-y-3 max-h-[400px] overflow-y-auto">
+              {violations.length > 0 ? (
+                violations.map((violation, idx) => {
+                  const config = getPriorityConfig(violation.severity);
+                  const Icon = config.icon;
+                  return (
+                    <div
+                      key={idx}
+                      className={`${config.bg} ${config.border} border rounded-xl p-4 hover:shadow-md transition-shadow`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <Icon
+                          className={`w-5 h-5 ${config.color} flex-shrink-0 mt-0.5`}
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-semibold text-gray-900">
+                              {violation.parameter}
+                            </span>
+                            <span
+                              className={`text-xs font-bold ${config.color} uppercase`}
+                            >
+                              {violation.severity}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-700 mb-2">
+                            {violation.message}
+                          </p>
+                          <div className="flex items-center gap-4 text-xs text-gray-600">
+                            <span>
+                              Current:{" "}
+                              <strong>{violation.current_value}</strong>
+                            </span>
+                            <span>
+                              Limit: <strong>{violation.threshold}</strong>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 px-4">
+                  <div className="bg-green-50 rounded-full p-4 mb-4">
+                    <svg
+                      className="w-12 h-12 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                    No Violations
+                  </h4>
+                  <p className="text-sm text-gray-600 text-center">
+                    All parameters are within acceptable range. Water quality is
+                    optimal.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Recommendations */}
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-cyan-200/60 overflow-hidden">
+            <div className="p-5 border-b bg-gradient-to-r from-cyan-50/60 via-blue-50/50 to-sky-50/60">
+              <div className="flex items-center space-x-3">
+                <div className="bg-gradient-to-br from-cyan-400 to-blue-500 p-2.5 rounded-xl">
+                  <Lightbulb className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 text-lg">
+                    Recommendations
+                  </h3>
+                  <p className="text-xs text-gray-600 mt-0.5">
+                    {recommendations.length} action item(s) suggested
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="p-5 space-y-3 max-h-[400px] overflow-y-auto">
+              {recommendations.length > 0 ? (
+                recommendations.map((rec, idx) => {
+                  const config = getPriorityConfig(rec.priority);
+                  const TypeIcon = getTypeIcon(rec.type);
+                  const Icon = config.icon;
+                  return (
+                    <div
+                      key={idx}
+                      className={`${config.bg} ${config.border} border rounded-xl p-4 hover:shadow-md transition-shadow`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <TypeIcon
+                          className={`w-5 h-5 ${config.color} flex-shrink-0 mt-0.5`}
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-semibold text-gray-500 uppercase">
+                              {rec.type}
+                            </span>
+                            <div className="flex items-center gap-1">
+                              <Icon className={`w-3.5 h-3.5 ${config.color}`} />
                               <span
                                 className={`text-xs font-bold ${config.color} uppercase`}
                               >
-                                {violation.severity}
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-700 mb-2">
-                              {violation.message}
-                            </p>
-                            <div className="flex items-center gap-4 text-xs text-gray-600">
-                              <span>
-                                Current:{" "}
-                                <strong>{violation.current_value}</strong>
-                              </span>
-                              <span>
-                                Limit: <strong>{violation.threshold}</strong>
+                                {rec.priority}
                               </span>
                             </div>
                           </div>
+                          <p className="text-sm text-gray-700">{rec.message}</p>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Recommendations */}
-            {recommendations.length > 0 && (
-              <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-cyan-200/60 overflow-hidden">
-                <div className="p-5 border-b bg-gradient-to-r from-cyan-50/60 via-blue-50/50 to-sky-50/60">
-                  <div className="flex items-center space-x-3">
-                    <div className="bg-gradient-to-br from-cyan-400 to-blue-500 p-2.5 rounded-xl">
-                      <Lightbulb className="w-5 h-5 text-white" />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-gray-900 text-lg">
-                        Recommendations
-                      </h3>
-                      <p className="text-xs text-gray-600 mt-0.5">
-                        {recommendations.length} action item(s) suggested
-                      </p>
-                    </div>
+                  );
+                })
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 px-4">
+                  <div className="bg-blue-50 rounded-full p-4 mb-4">
+                    <svg
+                      className="w-12 h-12 text-blue-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
                   </div>
+                  <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                    No Recommendations
+                  </h4>
+                  <p className="text-sm text-gray-600 text-center">
+                    System is running optimally. No actions required at this
+                    time.
+                  </p>
                 </div>
-                <div className="p-5 space-y-3 max-h-[400px] overflow-y-auto">
-                  {recommendations.map((rec, idx) => {
-                    const config = getPriorityConfig(rec.priority);
-                    const TypeIcon = getTypeIcon(rec.type);
-                    const Icon = config.icon;
-                    return (
-                      <div
-                        key={idx}
-                        className={`${config.bg} ${config.border} border rounded-xl p-4 hover:shadow-md transition-shadow`}
-                      >
-                        <div className="flex items-start gap-3">
-                          <TypeIcon
-                            className={`w-5 h-5 ${config.color} flex-shrink-0 mt-0.5`}
-                          />
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs font-semibold text-gray-500 uppercase">
-                                {rec.type}
-                              </span>
-                              <div className="flex items-center gap-1">
-                                <Icon
-                                  className={`w-3.5 h-3.5 ${config.color}`}
-                                />
-                                <span
-                                  className={`text-xs font-bold ${config.color} uppercase`}
-                                >
-                                  {rec.priority}
-                                </span>
-                              </div>
-                            </div>
-                            <p className="text-sm text-gray-700">
-                              {rec.message}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        )}
+        </div>
 
         {/* Quality Score Trend Chart */}
         <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-cyan-200/30 overflow-hidden hover:shadow-2xl transition-shadow duration-300">
