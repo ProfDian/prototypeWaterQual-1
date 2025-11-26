@@ -53,9 +53,15 @@ export const useRealtimeLatestReading = (ipalId) => {
         (snapshot) => {
           if (!snapshot.empty) {
             const doc = snapshot.docs[0];
+            const rawData = doc.data();
+
+            // ✅ Convert Firestore Timestamp to ISO string
             const data = {
               id: doc.id,
-              ...doc.data(),
+              ...rawData,
+              timestamp: rawData.timestamp?.toDate
+                ? rawData.timestamp.toDate().toISOString()
+                : rawData.timestamp,
             };
 
             console.log("⚡ NEW READING from Firestore:", {

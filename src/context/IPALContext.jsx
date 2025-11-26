@@ -79,13 +79,43 @@ export const IPALProvider = ({ children }) => {
    */
   const fetchCurrentIpal = async (ipalId) => {
     try {
+      console.log(`🔍 Fetching IPAL details for ID: ${ipalId}`);
       const response = await ipalService.getIpalById(ipalId);
+      console.log(`📊 IPAL ${ipalId} response:`, response);
 
-      if (response.success) {
+      // Backend returns direct data object, not {success: true, data: {...}}
+      if (response && response.ipal_id) {
+        setCurrentIpal(response);
+        console.log(
+          `✅ IPAL ${ipalId} details loaded:`,
+          response.ipal_location
+        );
+      } else if (response.success && response.data) {
+        // Fallback: if response has success wrapper
         setCurrentIpal(response.data);
+        console.log(
+          `✅ IPAL ${ipalId} details loaded:`,
+          response.data.ipal_location
+        );
+      } else {
+        console.warn(`⚠️ IPAL ${ipalId} response invalid:`, response);
+        // Fallback: Use from ipalList if available
+        const ipalFromList = ipalList.find((ipal) => ipal.ipal_id === ipalId);
+        if (ipalFromList) {
+          console.log(`🔄 Using IPAL from list as fallback`);
+          setCurrentIpal(ipalFromList);
+        }
       }
     } catch (err) {
       console.error(`❌ Error fetching IPAL ${ipalId}:`, err);
+      // Fallback: Try to use from ipalList
+      const ipalFromList = ipalList.find((ipal) => ipal.ipal_id === ipalId);
+      if (ipalFromList) {
+        console.log(`🔄 Error fallback: Using IPAL from list`);
+        setCurrentIpal(ipalFromList);
+      } else {
+        console.error(`❌ No fallback available for IPAL ${ipalId}`);
+      }
     }
   };
 

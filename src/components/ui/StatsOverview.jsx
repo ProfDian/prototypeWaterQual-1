@@ -238,10 +238,25 @@ const StatsOverview = ({
               <span className="text-xs sm:text-sm">
                 Last updated:{" "}
                 <strong className="text-cyan-900">
-                  {new Date(lastUpdate).toLocaleString("id-ID", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })}
+                  {(() => {
+                    try {
+                      const date = new Date(lastUpdate);
+                      if (isNaN(date.getTime())) {
+                        return "Invalid date";
+                      }
+                      return date.toLocaleString("id-ID", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      });
+                    } catch (error) {
+                      console.error(
+                        "Error parsing lastUpdate:",
+                        lastUpdate,
+                        error
+                      );
+                      return "Invalid date";
+                    }
+                  })()}
                 </strong>
               </span>
             </div>

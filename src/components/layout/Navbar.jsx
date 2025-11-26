@@ -1,13 +1,7 @@
 // src/components/layout/Navbar.jsx
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  MdMenu,
-  MdNotifications,
-  MdLogout,
-  MdWaterDrop,
-  MdClose,
-} from "react-icons/md";
+import { MdMenu, MdLogout, MdWaterDrop, MdClose } from "react-icons/md";
 import { IoMdSettings } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
 import { Bell, BellDot, AlertTriangle } from "lucide-react";

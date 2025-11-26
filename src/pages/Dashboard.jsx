@@ -409,68 +409,143 @@ const Dashboard = () => {
 
   // Main Dashboard
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50/50 via-blue-50/80 to-sky-100/60">
-      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-        {/* Header */}
-        <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl border border-cyan-200/30 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/5 via-blue-400/5 to-sky-400/5"></div>
-          <div className="relative p-6 sm:p-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="flex items-start space-x-4">
-                <div className="bg-gradient-to-br from-cyan-400 to-blue-500 p-3 rounded-xl shadow-lg">
-                  <Waves className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                    Water Quality Monitoring
-                  </h1>
-                  <p className="text-gray-600 mt-1 text-sm sm:text-base">
-                    {currentIpal?.ipal_location || "Loading..."}
-                  </p>
-                  {latestReading?.timestamp && (
-                    <div className="flex items-center gap-3 mt-2 text-xs">
-                      <div className="flex items-center text-gray-500">
-                        <Clock className="w-3 h-3 mr-1" />
-                        Last update:{" "}
-                        {new Date(latestReading.timestamp).toLocaleString(
-                          "id-ID",
-                          {
-                            dateStyle: "short",
-                            timeStyle: "short",
-                          }
-                        )}
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50">
+      {/* Animated water background effect */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-cyan-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+      </div>
+
+      <div className="relative max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        {/* Enhanced Header with Water Theme */}
+        <div className="relative group">
+          {/* Glow effect */}
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 rounded-3xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
+
+          <div className="relative bg-white/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+            {/* Water wave animation background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-50/50 via-blue-50/30 to-indigo-50/50">
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%2306b6d4' fill-opacity='0.05' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E")`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "bottom",
+                }}
+              ></div>
+            </div>
+
+            <div className="relative p-6 sm:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex items-start space-x-4">
+                  {/* Animated Icon */}
+                  <div className="relative flex-shrink-0">
+                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl blur-md opacity-50 animate-pulse"></div>
+                    <div className="relative bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 p-3 rounded-2xl shadow-lg transform hover:scale-110 transition-transform duration-300">
+                      <Waves className="w-8 h-8 text-white" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
+                      <span className="bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                        Water Quality Monitoring
+                      </span>
+                    </h1>
+
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="h-1 w-20 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full"></div>
+                      <div className="h-1 w-10 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full"></div>
+                    </div>
+
+                    <p className="text-base sm:text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-3">
+                      {currentIpal?.ipal_location || "Loading..."}
+                    </p>
+
+                    {/* Inlet & Outlet Location Badges */}
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                      <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200/50 px-3 py-2 rounded-xl group hover:shadow-md transition-all">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                        <MapPin className="w-4 h-4 text-blue-600 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm font-semibold text-blue-700">
+                          Inlet
+                        </span>
+                        <span className="text-xs text-blue-600 font-mono">
+                          {locations.inlet[0].toFixed(5)},{" "}
+                          {locations.inlet[1].toFixed(5)}
+                        </span>
                       </div>
-                      {/* Real-time Indicators */}
-                      {isReadingListening && (
-                        <div className="flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 rounded-full border border-green-200">
-                          <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                          <span className="font-medium">Live</span>
-                        </div>
-                      )}
-                      {(criticalAlertCount > 0 || activeAlertCount > 0) && (
-                        <div className="flex items-center gap-1 px-2 py-1 bg-red-50 text-red-700 rounded-full border border-red-200">
-                          <AlertCircle className="w-3 h-3" />
-                          <span className="font-medium">
-                            {criticalAlertCount > 0
-                              ? `${criticalAlertCount} critical`
-                              : `${activeAlertCount} alerts`}
+
+                      <div className="flex items-center gap-2 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/50 px-3 py-2 rounded-xl group hover:shadow-md transition-all">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                        <MapPin className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm font-semibold text-emerald-700">
+                          Outlet
+                        </span>
+                        <span className="text-xs text-emerald-600 font-mono">
+                          {locations.outlet[0].toFixed(5)},{" "}
+                          {locations.outlet[1].toFixed(5)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {latestReading?.timestamp && (
+                      <div className="flex flex-wrap items-center gap-2 mt-3 text-xs">
+                        <div className="flex items-center gap-1.5 bg-white border border-gray-200 px-3 py-1.5 rounded-lg shadow-sm">
+                          <Clock className="w-3.5 h-3.5 text-gray-500" />
+                          <span className="text-gray-700 font-medium">
+                            {new Date(latestReading.timestamp).toLocaleString(
+                              "id-ID",
+                              {
+                                dateStyle: "short",
+                                timeStyle: "short",
+                              }
+                            )}
                           </span>
                         </div>
-                      )}
-                    </div>
-                  )}
+
+                        {isReadingListening && (
+                          <div className="flex items-center gap-1.5 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-300/50 px-3 py-1.5 rounded-lg shadow-sm">
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                            </span>
+                            <span className="font-semibold text-green-700">
+                              Live
+                            </span>
+                          </div>
+                        )}
+
+                        {(criticalAlertCount > 0 || activeAlertCount > 0) && (
+                          <div className="flex items-center gap-1.5 bg-gradient-to-r from-red-50 to-orange-50 border border-red-300/50 px-3 py-1.5 rounded-lg shadow-sm animate-pulse">
+                            <AlertCircle className="w-3.5 h-3.5 text-red-600" />
+                            <span className="font-semibold text-red-700">
+                              {criticalAlertCount > 0
+                                ? `${criticalAlertCount} Critical`
+                                : `${activeAlertCount} Alerts`}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
+
+                {/* Enhanced Refresh Button */}
+                <Button
+                  onClick={handleRefresh}
+                  disabled={isRefreshing}
+                  variant="ghost"
+                  className="self-start sm:self-center bg-gradient-to-br from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100 border border-cyan-200 rounded-xl p-3 transition-all duration-300 hover:shadow-lg group"
+                >
+                  <RefreshCw
+                    className={`w-5 h-5 text-cyan-600 group-hover:text-blue-600 ${
+                      isRefreshing ? "animate-spin" : ""
+                    }`}
+                  />
+                </Button>
               </div>
-              <Button
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-                variant="ghost"
-                className="self-start sm:self-center"
-              >
-                <RefreshCw
-                  className={`w-5 h-5 ${isRefreshing ? "animate-spin" : ""}`}
-                />
-              </Button>
             </div>
           </div>
         </div>
