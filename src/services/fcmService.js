@@ -119,7 +119,7 @@ export function onMessageListener(callback) {
       if (Notification.permission === "granted") {
         new Notification(payload.notification.title, {
           body: payload.notification.body,
-          icon: "/vite.svg",
+          icon: "/LogoIPAL.png",
           tag: payload.data?.alert_id || "notification",
         });
       }
