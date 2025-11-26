@@ -8,7 +8,7 @@ import { RiDashboardFill } from "react-icons/ri";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,6 +34,14 @@ const Login = () => {
     "/4.webp",
     "/5.webp",
   ];
+
+  // Redirect to dashboard if already logged in
+  useEffect(() => {
+    if (isAuthenticated()) {
+      console.log("✅ User already logged in, redirecting to dashboard");
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   // Slideshow effect
   useEffect(() => {
