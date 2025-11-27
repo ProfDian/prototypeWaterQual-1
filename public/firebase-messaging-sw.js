@@ -48,6 +48,30 @@ self.addEventListener("notificationclick", (event) => {
 
   event.notification.close();
 
-  // Open dashboard alerts page
-  event.waitUntil(clients.openWindow("http://localhost:5173/alerts"));
+  // Get the alert ID from notification data
+  const alertId = event.notification.data?.alert_id;
+
+  // Build URL with redirect parameter
+  const baseUrl = self.location.origin;
+  const targetUrl = `${baseUrl}/alerts?from=notification${
+    alertId ? `&alert=${alertId}` : ""
+  }`;
+
+  // Open alerts page with redirect parameter
+  event.waitUntil(
+    clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((clientList) => {
+        // Check if there's already a window open
+        for (const client of clientList) {
+          if (client.url.includes(baseUrl) && "focus" in client) {
+            return client.focus().then(() => client.navigate(targetUrl));
+          }
+        }
+        // If no window is open, open a new one
+        if (clients.openWindow) {
+          return clients.openWindow(targetUrl);
+        }
+      })
+  );
 });

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import authService from "../services/authServices";
 import { IoStatsChart } from "react-icons/io5";
@@ -8,7 +8,13 @@ import { RiDashboardFill } from "react-icons/ri";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { login, isAuthenticated } = useAuth();
+
+  // Get redirect info from URL parameters
+  const redirectFrom = searchParams.get("from");
+  const redirectTo = searchParams.get("redirect") || "/alerts";
+  const showNotificationMessage = redirectFrom === "notification";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,10 +44,12 @@ const Login = () => {
   // Redirect to dashboard if already logged in
   useEffect(() => {
     if (isAuthenticated()) {
-      console.log("✅ User already logged in, redirecting to dashboard");
-      navigate("/dashboard", { replace: true });
+      console.log("✅ User already logged in, redirecting...");
+      // If coming from notification, redirect to intended page
+      const destination = redirectFrom ? redirectTo : "/dashboard";
+      navigate(destination, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, redirectFrom, redirectTo]);
 
   // Slideshow effect
   useEffect(() => {
@@ -61,7 +69,9 @@ const Login = () => {
 
     try {
       await login(email, password);
-      navigate("/dashboard");
+      // Redirect to intended page (from notification) or dashboard
+      const destination = redirectFrom ? redirectTo : "/dashboard";
+      navigate(destination);
     } catch (error) {
       setError(error.message || "Login failed. Please try again.");
     } finally {
@@ -273,6 +283,34 @@ const Login = () => {
 
           {/* Login Card */}
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sm:p-10 md:p-12 border border-white/50">
+            {/* Notification Message Banner */}
+            {showNotificationMessage && (
+              <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
+                <div className="flex items-start">
+                  <svg
+                    className="w-5 h-5 text-blue-500 mr-3 flex-shrink-0 mt-0.5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <div>
+                    <h4 className="text-sm font-bold text-blue-900 mb-1">
+                      🔔 You're not logged in
+                    </h4>
+                    <p className="text-sm text-blue-700">
+                      Please login first to access the alerts page and view your
+                      notifications.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Header - Horizontal Layout */}
             <div className="mb-8 md:mb-10">
               <div className="flex items-center gap-5 md:gap-6 mb-5">
