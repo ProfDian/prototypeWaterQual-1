@@ -8,6 +8,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import ipalService from "../services/ipalService";
+import { useAuth } from "./AuthContext";
 
 const IPALContext = createContext();
 
@@ -15,6 +16,8 @@ const IPALContext = createContext();
  * IPAL Provider Component
  */
 export const IPALProvider = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+  
   // State
   const [currentIpalId, setCurrentIpalId] = useState(null);
   const [ipalList, setIpalList] = useState([]);
@@ -132,17 +135,24 @@ export const IPALProvider = ({ children }) => {
    * Initialize: Load IPAL list and restore last selected IPAL from localStorage
    */
   useEffect(() => {
+    // Only fetch if user is authenticated
+    if (!isAuthenticated()) {
+      console.log("ℹ️  User not logged in, skipping IPAL fetch");
+      setIsLoading(false);
+      return;
+    }
+
+    console.log("✅ User authenticated, initializing IPAL Context");
+
     // Try to restore last selected IPAL from localStorage
     const savedIpalId = localStorage.getItem("currentIpalId");
     if (savedIpalId) {
       setCurrentIpalId(parseInt(savedIpalId));
     }
 
-    // Fetch IPAL list
+    // Fetch IPAL list only if logged in
     fetchIpalList();
-  }, []);
-
-  /**
+  }, [isAuthenticated]); // Re-run when auth state changes  /**
    * When currentIpalId changes, fetch its details
    */
   useEffect(() => {
