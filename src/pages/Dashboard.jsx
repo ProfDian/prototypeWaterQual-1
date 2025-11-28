@@ -558,15 +558,13 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Overview */}
-        {qualityScore > 0 && (
-          <div className="animate-fade-in">
-            <StatsOverview
-              qualityScore={qualityScore}
-              status={fuzzyStatus}
-              lastUpdate={latestReading?.timestamp}
-            />
-          </div>
-        )}
+        <div className="animate-fade-in">
+          <StatsOverview
+            qualityScore={qualityScore}
+            status={fuzzyStatus}
+            lastUpdate={latestReading?.timestamp}
+          />
+        </div>
 
         {/* 🆕 VIOLATIONS & RECOMMENDATIONS SECTION */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

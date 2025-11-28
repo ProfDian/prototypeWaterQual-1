@@ -25,6 +25,9 @@ const StatsOverview = ({
         border: "border-emerald-200",
         icon: TrendingUp,
         gradient: "from-emerald-500 to-green-500",
+        bgGradient: "from-emerald-50 to-green-50",
+        borderColor: "border-emerald-300",
+        textColor: "text-emerald-700",
       },
       Baik: {
         bg: "bg-green-50",
@@ -32,6 +35,9 @@ const StatsOverview = ({
         border: "border-green-200",
         icon: TrendingUp,
         gradient: "from-green-500 to-emerald-500",
+        bgGradient: "from-green-50 to-emerald-50",
+        borderColor: "border-green-300",
+        textColor: "text-green-700",
       },
       Sedang: {
         bg: "bg-yellow-50",
@@ -39,6 +45,9 @@ const StatsOverview = ({
         border: "border-yellow-200",
         icon: Minus,
         gradient: "from-yellow-500 to-orange-400",
+        bgGradient: "from-yellow-50 to-orange-50",
+        borderColor: "border-yellow-300",
+        textColor: "text-yellow-700",
       },
       Buruk: {
         bg: "bg-orange-50",
@@ -46,6 +55,9 @@ const StatsOverview = ({
         border: "border-orange-200",
         icon: TrendingDown,
         gradient: "from-orange-500 to-red-500",
+        bgGradient: "from-orange-50 to-red-50",
+        borderColor: "border-orange-300",
+        textColor: "text-orange-700",
       },
       "Sangat Buruk": {
         bg: "bg-red-50",
@@ -53,6 +65,50 @@ const StatsOverview = ({
         border: "border-red-200",
         icon: TrendingDown,
         gradient: "from-red-500 to-rose-600",
+        bgGradient: "from-red-50 to-rose-50",
+        borderColor: "border-red-300",
+        textColor: "text-red-700",
+      },
+      // English mappings
+      Excellent: {
+        bg: "bg-emerald-50",
+        text: "text-emerald-700",
+        border: "border-emerald-200",
+        icon: TrendingUp,
+        gradient: "from-emerald-500 to-green-500",
+        bgGradient: "from-emerald-50 to-green-50",
+        borderColor: "border-emerald-300",
+        textColor: "text-emerald-700",
+      },
+      Good: {
+        bg: "bg-green-50",
+        text: "text-green-700",
+        border: "border-green-200",
+        icon: TrendingUp,
+        gradient: "from-green-500 to-emerald-500",
+        bgGradient: "from-green-50 to-emerald-50",
+        borderColor: "border-green-300",
+        textColor: "text-green-700",
+      },
+      Fair: {
+        bg: "bg-yellow-50",
+        text: "text-yellow-700",
+        border: "border-yellow-200",
+        icon: Minus,
+        gradient: "from-yellow-500 to-orange-400",
+        bgGradient: "from-yellow-50 to-orange-50",
+        borderColor: "border-yellow-300",
+        textColor: "text-yellow-700",
+      },
+      Poor: {
+        bg: "bg-red-50",
+        text: "text-red-700",
+        border: "border-red-200",
+        icon: TrendingDown,
+        gradient: "from-red-500 to-rose-600",
+        bgGradient: "from-red-50 to-rose-50",
+        borderColor: "border-red-300",
+        textColor: "text-red-700",
       },
     };
     return (
@@ -62,6 +118,9 @@ const StatsOverview = ({
         border: "border-gray-200",
         icon: Minus,
         gradient: "from-gray-400 to-gray-500",
+        bgGradient: "from-gray-50 to-gray-100",
+        borderColor: "border-gray-300",
+        textColor: "text-gray-700",
       }
     );
   };
@@ -193,15 +252,7 @@ const StatsOverview = ({
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 to-blue-500/10 rounded-2xl blur-xl"></div>
               <div
-                className={`relative px-6 py-4 rounded-2xl border-2 shadow-xl backdrop-blur-sm
-                ${
-                  status.includes("Excellent") || status.includes("Good")
-                    ? "bg-gradient-to-br from-cyan-50 to-blue-50 border-cyan-300 text-cyan-700"
-                    : status.includes("Fair")
-                    ? "bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-300 text-yellow-700"
-                    : "bg-gradient-to-br from-red-50 to-orange-50 border-red-300 text-red-700"
-                }
-              `}
+                className={`relative px-6 py-4 rounded-2xl border-2 shadow-xl backdrop-blur-sm bg-gradient-to-br ${statusConfig.bgGradient} ${statusConfig.borderColor} ${statusConfig.textColor}`}
               >
                 <div className="flex items-center space-x-3">
                   <StatusIcon className="w-7 h-7" strokeWidth={2.5} />
