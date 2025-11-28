@@ -17,7 +17,7 @@ const IPALContext = createContext();
  */
 export const IPALProvider = ({ children }) => {
   const { isAuthenticated } = useAuth();
-  
+
   // State
   const [currentIpalId, setCurrentIpalId] = useState(null);
   const [ipalList, setIpalList] = useState([]);
@@ -59,18 +59,22 @@ export const IPALProvider = ({ children }) => {
       console.error("❌ Error fetching IPAL list:", err);
       setError(err.message || "Failed to fetch IPAL list");
 
-      // Fallback: If error, create dummy IPAL entry and use IPAL ID 1 as default
-      console.log("🔄 Fallback: Using IPAL ID 1 as default");
-      setCurrentIpalId(1);
-      setIpalList([
-        {
-          ipal_id: 1,
-          ipal_location: "IPAL Teknik Lingkungan Undip",
-          status: "active",
-          sensor_count: 8,
-        },
-      ]);
-      localStorage.setItem("currentIpalId", "1");
+      // Don't create fallback data if token expired (401)
+      // User will be redirected to login by api.js
+      if (!err.message?.includes("Token expired")) {
+        // Fallback: If error, create dummy IPAL entry and use IPAL ID 1 as default
+        console.log("🔄 Fallback: Using IPAL ID 1 as default");
+        setCurrentIpalId(1);
+        setIpalList([
+          {
+            ipal_id: 1,
+            ipal_location: "IPAL Teknik Lingkungan Undip",
+            status: "active",
+            sensor_count: 8,
+          },
+        ]);
+        localStorage.setItem("currentIpalId", "1");
+      }
     } finally {
       setIsLoading(false);
       console.log("✅ IPAL Context loading completed");
@@ -111,13 +115,17 @@ export const IPALProvider = ({ children }) => {
       }
     } catch (err) {
       console.error(`❌ Error fetching IPAL ${ipalId}:`, err);
-      // Fallback: Try to use from ipalList
-      const ipalFromList = ipalList.find((ipal) => ipal.ipal_id === ipalId);
-      if (ipalFromList) {
-        console.log(`🔄 Error fallback: Using IPAL from list`);
-        setCurrentIpal(ipalFromList);
-      } else {
-        console.error(`❌ No fallback available for IPAL ${ipalId}`);
+
+      // Don't fallback if token expired - user will be redirected to login
+      if (!err.message?.includes("Token expired")) {
+        // Fallback: Try to use from ipalList
+        const ipalFromList = ipalList.find((ipal) => ipal.ipal_id === ipalId);
+        if (ipalFromList) {
+          console.log(`🔄 Error fallback: Using IPAL from list`);
+          setCurrentIpal(ipalFromList);
+        } else {
+          console.error(`❌ No fallback available for IPAL ${ipalId}`);
+        }
       }
     }
   };
@@ -152,7 +160,9 @@ export const IPALProvider = ({ children }) => {
 
     // Fetch IPAL list only if logged in
     fetchIpalList();
-  }, [isAuthenticated]); // Re-run when auth state changes  /**
+  }, [isAuthenticated]); // Re-run when auth state changes
+
+  /**
    * When currentIpalId changes, fetch its details
    */
   useEffect(() => {

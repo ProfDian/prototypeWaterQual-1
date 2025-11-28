@@ -47,6 +47,21 @@ const apiFetch = async (endpoint, options = {}) => {
 
     // Check if response is ok
     if (!response.ok) {
+      // Handle 401 Unauthorized (token expired/invalid)
+      if (response.status === 401) {
+        console.error("🔒 Token expired or invalid, logging out...");
+
+        // Clear localStorage
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("currentIpalId");
+
+        // Redirect to login page
+        window.location.href = "/login?expired=true";
+
+        throw new Error("Token expired. Please login again.");
+      }
+
       throw new Error(data.message || "Something went wrong");
     }
 
