@@ -26,6 +26,7 @@ const authService = {
     try {
       console.log("🔐 Attempting login...");
       console.log("   Email:", email);
+      console.log("   API URL:", import.meta.env.VITE_API_URL);
 
       const response = await api.post("/auth/login", {
         email,
@@ -34,6 +35,12 @@ const authService = {
 
       console.log("✅ Login successful!");
       console.log("   User:", response.user?.email);
+      console.log("   UID:", response.user?.uid);
+      console.log("   Role:", response.user?.role);
+      console.log(
+        "   Token preview:",
+        response.token?.substring(0, 20) + "..."
+      );
 
       // Save to localStorage
       if (response.token) {
@@ -45,6 +52,7 @@ const authService = {
       return response;
     } catch (error) {
       console.error("❌ Login failed:", error.message);
+      console.error("   Error details:", error);
       throw error;
     }
   },

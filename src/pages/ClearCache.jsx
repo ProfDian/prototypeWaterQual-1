@@ -70,6 +70,20 @@ const ClearCache = () => {
           </ul>
         </div>
 
+        <div className="bg-amber-50 border border-amber-300 rounded-lg p-4 mb-6">
+          <p className="font-semibold text-amber-900 mb-2">
+            ⚠️ Setelah clear cache, login dengan:
+          </p>
+          <div className="text-sm text-amber-800 space-y-1">
+            <p>
+              <strong>Email:</strong> fattah.afr2@gmail.com
+            </p>
+            <p>
+              <strong>Password:</strong> Cerberus02 (huruf C kapital)
+            </p>
+          </div>
+        </div>
+
         {!isCleared ? (
           <button
             onClick={handleClearCache}
