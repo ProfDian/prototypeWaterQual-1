@@ -10,12 +10,14 @@
  * - Single source of truth untuk base URL
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+// Remove trailing slash dari URL untuk avoid double slash
+const rawUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_BASE_URL = rawUrl.endsWith("/") ? rawUrl.slice(0, -1) : rawUrl;
 
 // Debug logging
 console.log("🌐 API Configuration:");
-console.log("   VITE_API_URL:", import.meta.env.VITE_API_URL);
-console.log("   API_BASE_URL:", API_BASE_URL);
+console.log("   VITE_API_URL (raw):", import.meta.env.VITE_API_URL);
+console.log("   API_BASE_URL (clean):", API_BASE_URL);
 console.log("   Mode:", import.meta.env.MODE);
 
 /**
