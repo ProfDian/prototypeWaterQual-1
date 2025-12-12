@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Clear Browser Cache</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .card {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      button {
+        background: #dc2626;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+      button:hover {
+        background: #b91c1c;
+      }
+      .success {
+        color: #16a34a;
+        margin-top: 20px;
+        font-weight: bold;
+      }
+      h1 {
+        color: #1f2937;
+      }
+      p {
+        color: #6b7280;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>🧹 Clear Browser Cache</h1>
+      <p>
+        Klik tombol di bawah untuk menghapus semua data tersimpan di browser
+        (localStorage, sessionStorage, cookies).
+      </p>
+      <p><strong>Ini akan:</strong></p>
+      <ul>
+        <li>Hapus token login lama</li>
+        <li>Hapus user data cached</li>
+        <li>Hapus session data</li>
+        <li>Redirect ke login page</li>
+      </ul>
+
+      <button onclick="clearAll()">Clear All Cache & Reload</button>
+
+      <div id="message"></div>
+    </div>
+
+    <script>
+      function clearAll() {
+        // Clear localStorage
+        localStorage.clear();
+        console.log("✅ localStorage cleared");
+
+        // Clear sessionStorage
+        sessionStorage.clear();
+        console.log("✅ sessionStorage cleared");
+
+        // Clear cookies
+        document.cookie.split(";").forEach(function (c) {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(
+              /=.*/,
+              "=;expires=" + new Date().toUTCString() + ";path=/"
+            );
+        });
+        console.log("✅ Cookies cleared");
+
+        // Show success message
+        document.getElementById("message").innerHTML =
+          '<div class="success">✅ Cache cleared! Redirecting to login...</div>';
+
+        // Redirect to login after 2 seconds
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
+      }
+    </script>
+  </body>
+</html>
