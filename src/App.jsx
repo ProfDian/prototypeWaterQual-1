@@ -10,6 +10,7 @@ import {
 
 // ⚡ Eager load - Always needed
 import Login from "./pages/Login";
+import ClearCache from "./pages/ClearCache";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import { LoadingScreen } from "./components/ui";
@@ -83,6 +84,7 @@ function App() {
           {/* Auth pages */}
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/clear-cache" element={<ClearCache />} />
 
           {/* Protected routes */}
           <Route
