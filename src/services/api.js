@@ -10,7 +10,7 @@
  * - Single source of truth untuk base URL
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 // Debug logging
 console.log("🌐 API Configuration:");
@@ -50,8 +50,8 @@ const apiFetch = async (endpoint, options = {}) => {
   // Debug logging
   console.log("🌐 API Request:", {
     url: `${API_BASE_URL}${endpoint}`,
-    method: config.method || 'GET',
-    hasToken: !!token
+    method: config.method || "GET",
+    hasToken: !!token,
   });
 
   try {
