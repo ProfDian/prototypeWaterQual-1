@@ -140,7 +140,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-white truncate">
-                    {user.displayName || user.email?.split("@")[0] || "User"}
+                    {user.username || user.email?.split("@")[0] || "User"}
                   </p>
                   <p className="text-[11px] text-cyan-300/80 truncate font-mono">
                     {user.email}
