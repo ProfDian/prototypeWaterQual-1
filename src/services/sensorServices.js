@@ -78,29 +78,8 @@ const sensorService = {
     }
   },
 
-  /**
-   * Create new sensor reading (dari ESP32/Arduino)
-   * @param {Object} data - Reading data
-   * @returns {Promise<Object>} Response
-   */
-  createReading: async (data) => {
-    try {
-      console.log("📤 Creating new sensor reading...");
-
-      const response = await api.post("/api/sensors/readings", data);
-
-      console.log("✅ Sensor reading created successfully");
-      console.log("   Reading ID:", response.data?.reading_id);
-
-      return response;
-    } catch (error) {
-      console.error("❌ Failed to create sensor reading:", error.message);
-      throw error;
-    }
-  },
-
   // ========================================
-  // SENSOR METADATA (NEW)
+  // SENSOR METADATA
   // ========================================
 
   /**
@@ -170,26 +149,6 @@ const sensorService = {
   },
 
   /**
-   * Get sensors by IPAL ID
-   * @param {number} ipalId - IPAL ID
-   * @returns {Promise<Array>} Array of sensors
-   */
-  getSensorsByIpal: async (ipalId) => {
-    try {
-      console.log(`🔧 Fetching sensors for IPAL ${ipalId}...`);
-
-      const response = await api.get(`/api/sensors/ipal/${ipalId}`);
-
-      console.log("✅ Sensors fetched:", response.data.count);
-
-      return response.data.data || [];
-    } catch (error) {
-      console.error("❌ Failed to fetch sensors by IPAL:", error.message);
-      throw error;
-    }
-  },
-
-  /**
    * Get latest reading untuk sensor tertentu
    * @param {string} sensorId - Sensor ID (e.g., "sensor-ph-inlet-001")
    * @returns {Promise<Object>} Sensor with latest reading
@@ -227,7 +186,7 @@ const sensorService = {
       if (end_date) queryParams += `&end_date=${end_date}`;
 
       const response = await api.get(
-        `/api/sensors/${sensorId}/history?${queryParams}`
+        `/api/sensors/${sensorId}/history?${queryParams}`,
       );
 
       console.log("🔍 DEBUG history response:", response);
@@ -238,87 +197,6 @@ const sensorService = {
       return response;
     } catch (error) {
       console.error("❌ Failed to fetch sensor history:", error.message);
-      throw error;
-    }
-  },
-
-  /**
-   * Add new sensor (Manager/Admin only)
-   * @param {Object} data - Sensor data
-   * @returns {Promise<Object>} Created sensor
-   */
-  addSensor: async (data) => {
-    try {
-      console.log("➕ Adding new sensor...");
-
-      const response = await api.post("/api/sensors", data);
-
-      console.log("✅ Sensor added:", response.data.data.sensor_id);
-
-      return response.data;
-    } catch (error) {
-      console.error("❌ Failed to add sensor:", error.message);
-      throw error;
-    }
-  },
-
-  /**
-   * Update sensor (Manager/Admin only)
-   * @param {string} sensorId - Sensor ID
-   * @param {Object} data - Update data
-   * @returns {Promise<Object>} Updated sensor
-   */
-  updateSensor: async (sensorId, data) => {
-    try {
-      console.log(`✏️ Updating sensor ${sensorId}...`);
-
-      const response = await api.put(`/api/sensors/${sensorId}`, data);
-
-      console.log("✅ Sensor updated");
-
-      return response.data;
-    } catch (error) {
-      console.error("❌ Failed to update sensor:", error.message);
-      throw error;
-    }
-  },
-
-  /**
-   * Delete sensor (Admin only)
-   * @param {string} sensorId - Sensor ID
-   * @returns {Promise<Object>} Response
-   */
-  deleteSensor: async (sensorId) => {
-    try {
-      console.log(`🗑️ Deleting sensor ${sensorId}...`);
-
-      const response = await api.delete(`/api/sensors/${sensorId}`);
-
-      console.log("✅ Sensor deleted");
-
-      return response.data;
-    } catch (error) {
-      console.error("❌ Failed to delete sensor:", error.message);
-      throw error;
-    }
-  },
-
-  /**
-   * Get sensor status (online/offline)
-   * @param {string} sensorId - Sensor ID
-   * @returns {Promise<Object>} Sensor status
-   */
-  getSensorStatus: async (sensorId) => {
-    try {
-      console.log(`🔍 Checking sensor status: ${sensorId}...`);
-
-      const response = await api.get(`/api/sensors/${sensorId}/status`);
-
-      console.log("✅ Status:", response.data.data.status);
-
-      return response.data.data;
-    } catch (error) {
-      console.error("❌ Failed to fetch sensor status:", error.message);
       throw error;
     }
   },
