@@ -141,12 +141,11 @@ const authService = {
 
     // STEP 2: Send email via Firebase (only if we reach here)
     try {
-      // Use production URL for password reset redirect
-      // This ensures emails always link to production, not localhost
+      // ALWAYS use production URL for password reset redirect
+      // localhost is not whitelisted in Firebase Console
+      // Redirect to login page after password reset
       const redirectUrl =
-        import.meta.env.VITE_FRONTEND_URL || import.meta.env.PROD
-          ? window.location.origin
-          : "https://ipal-monitoring-teklingundip.vercel.app";
+        "https://ipal-monitoring-teklingundip.vercel.app/login";
 
       const actionCodeSettings = {
         url: redirectUrl,
@@ -168,6 +167,9 @@ const authService = {
         errorMessage = "Invalid email address format.";
       } else if (firebaseError.code === "auth/too-many-requests") {
         errorMessage = "Too many requests. Please try again later.";
+      } else if (firebaseError.code === "auth/unauthorized-continue-uri") {
+        errorMessage =
+          "Password reset service is temporarily unavailable. Please contact administrator.";
       }
 
       throw new Error(errorMessage);

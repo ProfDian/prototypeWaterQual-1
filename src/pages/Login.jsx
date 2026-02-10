@@ -499,17 +499,8 @@ const Login = () => {
                 </div>
               </div>
 
-              {/* Remember & Forgot */}
-              <div className="flex items-center justify-between flex-wrap gap-2 pt-1">
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 md:w-5 md:h-5 text-cyan-500 border-gray-300 rounded focus:ring-cyan-500"
-                  />
-                  <span className="ml-2.5 text-sm md:text-base text-gray-600">
-                    Remember me
-                  </span>
-                </label>
+              {/* Forgot Password Link */}
+              <div className="flex justify-end pt-1">
                 <button
                   type="button"
                   onClick={() => setShowForgotModal(true)}

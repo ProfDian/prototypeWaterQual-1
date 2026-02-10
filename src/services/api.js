@@ -62,19 +62,28 @@ const apiFetch = async (endpoint, options = {}) => {
 
     // Check if response is ok
     if (!response.ok) {
-      // Handle 401 Unauthorized (token expired/invalid)
+      // Handle 401 Unauthorized
       if (response.status === 401) {
-        console.error("🔒 Token expired or invalid, logging out...");
+        // Check if this is NOT a login attempt (login returns 401 for wrong password)
+        const isLoginEndpoint = endpoint === "/auth/login";
 
-        // Clear localStorage
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        localStorage.removeItem("currentIpalId");
+        if (!isLoginEndpoint) {
+          // Token expired/invalid for authenticated endpoints
+          console.error("🔒 Token expired or invalid, logging out...");
 
-        // Redirect to login page
-        window.location.href = "/login?expired=true";
+          // Clear localStorage
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          localStorage.removeItem("currentIpalId");
 
-        throw new Error("Token expired. Please login again.");
+          // Redirect to login page
+          window.location.href = "/login?expired=true";
+
+          throw new Error("Session expired. Please login again.");
+        }
+
+        // For login endpoint, just throw the error message from backend
+        throw new Error(data.message || "Invalid email or password");
       }
 
       throw new Error(data.message || "Something went wrong");
