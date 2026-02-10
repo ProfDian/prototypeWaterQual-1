@@ -19,8 +19,6 @@ const Alerts = () => {
   // ⚡ FIRESTORE REAL-TIME - ALL alerts with auto-update
   const {
     activeAlerts: realtimeAlerts,
-    criticalCount,
-    highCount,
     isListening,
     error: realtimeError,
   } = useRealtimeAlerts(1, {
