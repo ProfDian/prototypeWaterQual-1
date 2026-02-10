@@ -16,7 +16,7 @@ import { useActiveAlerts } from "../../hooks/useQueryHooks";
 import { useIPAL } from "../../context/IPALContext";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
@@ -77,7 +77,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   IPAL Monitor
                 </h1>
                 <p className="text-xs text-cyan-300/90 font-medium">
-                  Teknik Lingkungan
+                  Teknik Lingkungan Universitas Diponegoro
                 </p>
               </div>
             </div>
@@ -128,27 +128,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           </div>
         </nav>
 
-        {/* User Profile & Logout */}
+        {/* Logout */}
         <div className="flex-shrink-0 px-3 py-4 border-t border-white/10 bg-gradient-to-t from-slate-950/80 to-transparent backdrop-blur-sm">
-          {user && (
-            <div className="mb-3 px-3 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all duration-200">
-              <div className="flex items-center space-x-3">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-400 via-cyan-500 to-blue-500 flex items-center justify-center shadow-lg ring-2 ring-white/20 flex-shrink-0">
-                  <span className="text-base font-bold text-white">
-                    {user.email?.[0]?.toUpperCase() || "U"}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white truncate">
-                    {user.username || user.email?.split("@")[0] || "User"}
-                  </p>
-                  <p className="text-[11px] text-cyan-300/80 truncate font-mono">
-                    {user.email}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
           <button
             onClick={handleLogoutClick}
             className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-red-200 hover:text-white hover:bg-red-500/15 transition-all duration-200 group border border-transparent hover:border-red-400/20 active:scale-[0.98]"

@@ -1,13 +1,5 @@
 // src/components/dashboard/StatsOverview.jsx
-import React from "react";
-import {
-  Award,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Clock,
-  Droplets,
-} from "lucide-react";
+import { Award, TrendingUp, TrendingDown, Minus, Clock } from "lucide-react";
 
 const StatsOverview = ({
   qualityScore = 0,
@@ -125,38 +117,6 @@ const StatsOverview = ({
     );
   };
 
-  const getScoreConfig = (score) => {
-    if (score >= 80)
-      return {
-        color: "text-emerald-600",
-        ring: "ring-emerald-500",
-        bg: "bg-emerald-500",
-      };
-    if (score >= 60)
-      return {
-        color: "text-green-600",
-        ring: "ring-green-500",
-        bg: "bg-green-500",
-      };
-    if (score >= 40)
-      return {
-        color: "text-yellow-600",
-        ring: "ring-yellow-500",
-        bg: "bg-yellow-500",
-      };
-    if (score >= 20)
-      return {
-        color: "text-orange-600",
-        ring: "ring-orange-500",
-        bg: "bg-orange-500",
-      };
-    return {
-      color: "text-red-600",
-      ring: "ring-red-500",
-      bg: "bg-red-500",
-    };
-  };
-
   const statusConfig = status ? getStatusConfig(status) : null;
   // const scoreConfig = getScoreConfig(qualityScore);
   const StatusIcon = statusConfig?.icon || Minus;
@@ -235,8 +195,8 @@ const StatsOverview = ({
                       trend > 0
                         ? "text-green-600"
                         : trend < 0
-                        ? "text-red-600"
-                        : "text-gray-500"
+                          ? "text-red-600"
+                          : "text-gray-500"
                     }`}
                   >
                     {trend > 0 ? "+" : ""}
@@ -268,16 +228,9 @@ const StatsOverview = ({
           )}
         </div>
 
-        {/* Divider dengan efek air */}
+        {/* Subtle water divider */}
         <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t-2 border-gradient-to-r from-transparent via-cyan-200 to-transparent"></div>
-          </div>
-          <div className="relative flex justify-center">
-            <span className="bg-gradient-to-r from-cyan-100 to-blue-100 px-4 py-1 rounded-full text-xs font-bold text-cyan-600">
-              💧
-            </span>
-          </div>
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-cyan-300/60 to-transparent" />
         </div>
 
         {/* Footer Info */}
@@ -303,7 +256,7 @@ const StatsOverview = ({
                       console.error(
                         "Error parsing lastUpdate:",
                         lastUpdate,
-                        error
+                        error,
                       );
                       return "Invalid date";
                     }
@@ -332,8 +285,8 @@ const StatsOverview = ({
         {/* Progress Bar dengan efek air */}
         <div className="mt-5">
           <div className="flex items-center justify-between text-xs font-bold text-cyan-600 mb-2">
-            <span>😟 Poor</span>
-            <span>😊 Excellent</span>
+            <span>Poor</span>
+            <span>Excellent</span>
           </div>
           <div className="relative w-full h-4 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded-full overflow-hidden shadow-inner">
             <div

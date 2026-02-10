@@ -5,7 +5,7 @@ import { MdMenu, MdLogout, MdWaterDrop, MdClose } from "react-icons/md";
 import { IoMdSettings } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
 import { Bell, BellDot, AlertTriangle } from "lucide-react";
-import authService from "../../services/authServices";
+import { useAuth } from "../../context/AuthContext";
 import LogoutModal from "../ui/LogoutModal";
 import IPALSelector from "../ipal/IPALSelector";
 import { useRealtimeAlerts } from "../../hooks/useRealtimeAlerts";
@@ -13,7 +13,8 @@ import { useIPAL } from "../../context/IPALContext";
 import { format } from "date-fns";
 
 const Navbar = ({ setSidebarOpen }) => {
-  const [user, setUser] = useState(null);
+  // Get user from AuthContext (same as Sidebar)
+  const { user, logout } = useAuth();
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [notifMenuOpen, setNotifMenuOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -32,13 +33,6 @@ const Navbar = ({ setSidebarOpen }) => {
       statusFilter: "active",
       priorityOnly: true,
     });
-
-  useEffect(() => {
-    const currentUser = authService.getCurrentUser();
-    if (currentUser) {
-      setUser(currentUser);
-    }
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -60,8 +54,8 @@ const Navbar = ({ setSidebarOpen }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = async () => {
-    await authService.logout();
+  const handleLogout = () => {
+    logout();
     setShowLogoutModal(false);
     setProfileMenuOpen(false);
     navigate("/login"); // Redirect to login page
@@ -239,7 +233,7 @@ const Navbar = ({ setSidebarOpen }) => {
                 </div>
                 <div className="hidden xl:block text-left">
                   <p className="text-sm font-semibold text-slate-900 leading-tight truncate max-w-[120px]">
-                    {user?.displayName || user?.email?.split("@")[0] || "User"}
+                    {user?.username || user?.email?.split("@")[0] || "User"}
                   </p>
                   <p className="text-xs text-slate-600 leading-tight font-mono truncate max-w-[120px]">
                     {user?.email || ""}
@@ -259,7 +253,7 @@ const Navbar = ({ setSidebarOpen }) => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-slate-900 truncate">
-                          {user?.displayName ||
+                          {user?.username ||
                             user?.email?.split("@")[0] ||
                             "User"}
                         </p>
@@ -371,7 +365,7 @@ const NotificationItem = ({ alert, onClick }) => {
       <div className="flex items-start space-x-3">
         <div
           className={`p-1.5 rounded-lg flex-shrink-0 ${getSeverityColor(
-            alert.severity
+            alert.severity,
           )}`}
         >
           {getSeverityIcon(alert.severity)}
@@ -383,7 +377,7 @@ const NotificationItem = ({ alert, onClick }) => {
             </p>
             <span
               className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${getSeverityColor(
-                alert.severity
+                alert.severity,
               )}`}
             >
               {alert.severity}

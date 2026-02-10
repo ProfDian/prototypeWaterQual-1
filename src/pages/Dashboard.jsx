@@ -31,8 +31,8 @@ import { useIPAL } from "../context/IPALContext";
 // ⚡ Lazy load heavy components (Charts only - Map components eager loaded to prevent reuse error)
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 const LineChart = lazy(() => import("../components/charts/LineChart"));
-const QualityScoreChart = lazy(() =>
-  import("../components/charts/QualityScoreCharts")
+const QualityScoreChart = lazy(
+  () => import("../components/charts/QualityScoreCharts"),
 );
 
 // Eager load - Small components
@@ -99,7 +99,7 @@ const Dashboard = () => {
     isListening: isReadingListening,
   } = useRealtimeLatestReading(currentIpalId);
 
-  // 📊 OPTIMIZED: Get alert counts (FREE - no document reads!)
+  // 📊 OPTIMIZED: Get alert counts (Fno document reads!)
   const {
     active: activeAlertCount, // Used in badge display
     critical: criticalAlertCount, // Used in badge display
@@ -143,7 +143,7 @@ const Dashboard = () => {
       cacheTime: 60000, // 1 minute
       refetchInterval: 60000, // Auto-refresh every 60 seconds
       refetchOnWindowFocus: true, // Refresh when window regains focus
-    }
+    },
   );
 
   // Data State (derived from React Query)
@@ -198,9 +198,6 @@ const Dashboard = () => {
     { value: "week", label: "📅 Last 7 Days" },
   ];
 
-  // 🆕 SIMPLIFIED - React Query handles fetching automatically!
-  // No more manual useEffect for fetching!
-
   const handleRefresh = async () => {
     if (isRefreshing) return; // Prevent spam
 
@@ -212,7 +209,7 @@ const Dashboard = () => {
           refetchDashboard(),
           refetchChart(),
           selectedPlace && refetchHistorical(),
-        ].filter(Boolean)
+        ].filter(Boolean),
       );
 
       console.log("✅ All data refreshed!");
@@ -264,12 +261,12 @@ const Dashboard = () => {
           avgScore: Math.round(
             qualityChartData.reduce(
               (sum, d) => sum + (d.quality_score || 0),
-              0
-            ) / qualityChartData.length
+              0,
+            ) / qualityChartData.length,
           ),
           totalViolations: qualityChartData.reduce(
             (sum, d) => sum + (d.alert_count || 0),
-            0
+            0,
           ),
           dataPoints: qualityChartData.length,
         }
@@ -505,7 +502,7 @@ const Dashboard = () => {
                               {
                                 dateStyle: "short",
                                 timeStyle: "short",
-                              }
+                              },
                             )}
                           </span>
                         </div>
@@ -960,7 +957,7 @@ const Dashboard = () => {
                   <button
                     onClick={() =>
                       setCurrentParamIndex((prev) =>
-                        prev > 0 ? prev - 1 : parameters.length - 1
+                        prev > 0 ? prev - 1 : parameters.length - 1,
                       )
                     }
                     className="p-2 hover:bg-white/80 rounded-lg transition-all duration-200 hover:shadow-md"
@@ -974,7 +971,7 @@ const Dashboard = () => {
                   <button
                     onClick={() =>
                       setCurrentParamIndex((prev) =>
-                        prev < parameters.length - 1 ? prev + 1 : 0
+                        prev < parameters.length - 1 ? prev + 1 : 0,
                       )
                     }
                     className="p-2 hover:bg-white/80 rounded-lg transition-all duration-200 hover:shadow-md"
