@@ -27,12 +27,11 @@ const ProtectedRoute = ({ children }) => {
   // Redirect to login if not authenticated
   if (!isAuthenticated()) {
     console.log("🚫 User not authenticated, redirecting to login");
+    console.log("   Intended path:", location.pathname + location.search);
 
-    // Preserve the intended destination and query parameters
-    const from = location.search ? "notification" : null;
-    const loginPath = from
-      ? `/login?from=${from}&redirect=${location.pathname}${location.search}`
-      : "/login";
+    // ALWAYS preserve the intended destination for redirect after login
+    const intendedPath = location.pathname + location.search;
+    const loginPath = `/login?from=protected&redirect=${encodeURIComponent(intendedPath)}`;
 
     return <Navigate to={loginPath} replace />;
   }

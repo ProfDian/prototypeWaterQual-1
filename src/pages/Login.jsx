@@ -13,8 +13,12 @@ const Login = () => {
 
   // Get redirect info from URL parameters
   const redirectFrom = searchParams.get("from");
-  const redirectTo = searchParams.get("redirect") || "/alerts";
-  const showNotificationMessage = redirectFrom === "notification";
+  const redirectTo = searchParams.get("redirect") || "/dashboard";
+  const showLoginRequiredMessage = [
+    "notification",
+    "protected",
+    "email",
+  ].includes(redirectFrom);
   const isTokenExpired = searchParams.get("expired") === "true";
 
   const [email, setEmail] = useState("");
@@ -56,7 +60,7 @@ const Login = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex(
-        (prevIndex) => (prevIndex + 1) % backgroundImages.length
+        (prevIndex) => (prevIndex + 1) % backgroundImages.length,
       );
     }, 5000); // Change image every 5 seconds
 
@@ -312,7 +316,7 @@ const Login = () => {
             )}
 
             {/* Notification Message Banner */}
-            {showNotificationMessage && (
+            {showLoginRequiredMessage && (
               <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">
                 <div className="flex items-start">
                   <svg
@@ -328,11 +332,11 @@ const Login = () => {
                   </svg>
                   <div>
                     <h4 className="text-sm font-bold text-blue-900 mb-1">
-                      🔔 You're not logged in
+                      🔐 Login Required
                     </h4>
                     <p className="text-sm text-blue-700">
-                      Please login first to access the alerts page and view your
-                      notifications.
+                      Please login to access the requested page. You will be
+                      redirected after login.
                     </p>
                   </div>
                 </div>

@@ -39,7 +39,7 @@ const authService = {
       console.log("   Role:", response.user?.role);
       console.log(
         "   Token preview:",
-        response.token?.substring(0, 20) + "..."
+        response.token?.substring(0, 20) + "...",
       );
 
       // Save to localStorage
@@ -131,7 +131,7 @@ const authService = {
       }
 
       console.log(
-        "✅ Email exists in Firebase Auth, proceeding to send reset link"
+        "✅ Email exists in Firebase Auth, proceeding to send reset link",
       );
     } catch (error) {
       console.error("❌ API check error:", error);
@@ -141,11 +141,19 @@ const authService = {
 
     // STEP 2: Send email via Firebase (only if we reach here)
     try {
+      // Use production URL for password reset redirect
+      // This ensures emails always link to production, not localhost
+      const redirectUrl =
+        import.meta.env.VITE_FRONTEND_URL || import.meta.env.PROD
+          ? window.location.origin
+          : "https://ipal-monitoring-teklingundip.vercel.app";
+
       const actionCodeSettings = {
-        url: window.location.origin,
+        url: redirectUrl,
         handleCodeInApp: false,
       };
 
+      console.log("📧 Password reset redirect URL:", redirectUrl);
       await sendPasswordResetEmail(auth, email, actionCodeSettings);
       console.log("✅ Password reset email sent successfully!");
       return { success: true };
