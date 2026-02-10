@@ -10,10 +10,7 @@ import api from "./api";
 const ALERT_ENDPOINTS = {
   BASE: "/api/alerts",
   STATS: "/api/alerts/stats",
-  BY_ID: (id) => `/api/alerts/${id}`,
-  READ: (id) => `/api/alerts/${id}/read`,
   STATUS: (id) => `/api/alerts/${id}/status`,
-  DELETE: (id) => `/api/alerts/${id}`,
 };
 
 /**
@@ -67,36 +64,6 @@ export const getAlertStats = async (ipal_id = null) => {
 };
 
 /**
- * Get alert by ID
- * @param {String} id - Alert ID
- * @returns {Promise<Object>} Alert data
- */
-export const getAlertById = async (id) => {
-  try {
-    const response = await api.get(ALERT_ENDPOINTS.BY_ID(id));
-    return response; // ✅ FIXED: Remove .data
-  } catch (error) {
-    console.error(`Error fetching alert ${id}:`, error);
-    throw error;
-  }
-};
-
-/**
- * Mark alert as read
- * @param {String} id - Alert ID
- * @returns {Promise<Object>} Update result
- */
-export const markAlertAsRead = async (id) => {
-  try {
-    const response = await api.put(ALERT_ENDPOINTS.READ(id));
-    return response; // ✅ FIXED: Remove .data
-  } catch (error) {
-    console.error(`Error marking alert ${id} as read:`, error);
-    throw error;
-  }
-};
-
-/**
  * Acknowledge alert (status: acknowledged)
  * @param {String} id - Alert ID
  * @returns {Promise<Object>} Update result
@@ -130,47 +97,9 @@ export const resolveAlert = async (id) => {
   }
 };
 
-/**
- * Delete alert (admin only)
- * @param {String} id - Alert ID
- * @returns {Promise<Object>} Delete result
- */
-export const deleteAlert = async (id) => {
-  try {
-    const response = await api.delete(ALERT_ENDPOINTS.DELETE(id));
-    return response; // ✅ FIXED: Remove .data
-  } catch (error) {
-    console.error(`Error deleting alert ${id}:`, error);
-    throw error;
-  }
-};
-
-/**
- * Get active alerts count (for badge)
- * @param {Number} ipal_id - IPAL ID
- * @returns {Promise<Number>} Active alert count
- */
-export const getActiveAlertCount = async (ipal_id = 1) => {
-  try {
-    const response = await getAlerts({
-      ipal_id,
-      status: "active",
-      limit: 100,
-    });
-    return response.count || 0;
-  } catch (error) {
-    console.error("Error fetching active alert count:", error);
-    return 0;
-  }
-};
-
 export default {
   getAlerts,
   getAlertStats,
-  getAlertById,
-  markAlertAsRead,
   acknowledgeAlert,
   resolveAlert,
-  deleteAlert,
-  getActiveAlertCount,
 };
