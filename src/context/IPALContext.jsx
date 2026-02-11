@@ -48,7 +48,7 @@ export const IPALProvider = ({ children }) => {
           setCurrentIpalId(firstIpal.ipal_id);
           localStorage.setItem("currentIpalId", firstIpal.ipal_id.toString());
           console.log(
-            `🎯 Auto-selected IPAL ${firstIpal.ipal_id}: ${firstIpal.ipal_location}`
+            `🎯 Auto-selected IPAL ${firstIpal.ipal_id}: ${firstIpal.ipal_location}`,
           );
         }
       } else {
@@ -62,18 +62,7 @@ export const IPALProvider = ({ children }) => {
       // Don't create fallback data if token expired (401)
       // User will be redirected to login by api.js
       if (!err.message?.includes("Token expired")) {
-        // Fallback: If error, create dummy IPAL entry and use IPAL ID 1 as default
-        console.log("🔄 Fallback: Using IPAL ID 1 as default");
-        setCurrentIpalId(1);
-        setIpalList([
-          {
-            ipal_id: 1,
-            ipal_location: "IPAL Teknik Lingkungan Undip",
-            status: "active",
-            sensor_count: 8,
-          },
-        ]);
-        localStorage.setItem("currentIpalId", "1");
+        console.log("⚠️ No IPALs available - user needs to create one");
       }
     } finally {
       setIsLoading(false);
@@ -95,14 +84,14 @@ export const IPALProvider = ({ children }) => {
         setCurrentIpal(response);
         console.log(
           `✅ IPAL ${ipalId} details loaded:`,
-          response.ipal_location
+          response.ipal_location,
         );
       } else if (response.success && response.data) {
         // Fallback: if response has success wrapper
         setCurrentIpal(response.data);
         console.log(
           `✅ IPAL ${ipalId} details loaded:`,
-          response.data.ipal_location
+          response.data.ipal_location,
         );
       } else {
         console.warn(`⚠️ IPAL ${ipalId} response invalid:`, response);

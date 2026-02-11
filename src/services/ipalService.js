@@ -2,7 +2,7 @@
  * ========================================
  * IPAL SERVICE
  * ========================================
- * API calls for IPAL management
+ * API calls for IPAL management (Full CRUD)
  */
 
 import api from "./api";
@@ -10,10 +10,6 @@ import api from "./api";
 const ipalService = {
   /**
    * Get all IPALs
-   * @param {Object} params - Query parameters
-   * @param {string} params.status - Filter by status (active|inactive|maintenance)
-   * @param {number} params.limit - Limit results
-   * @returns {Promise<Object>} Response with IPAL list
    */
   async getAllIpals(params = {}) {
     try {
@@ -27,8 +23,6 @@ const ipalService = {
 
   /**
    * Get IPAL by ID
-   * @param {number} ipalId - IPAL ID
-   * @returns {Promise<Object>} IPAL details with sensor count and latest reading
    */
   async getIpalById(ipalId) {
     try {
@@ -42,8 +36,6 @@ const ipalService = {
 
   /**
    * Get IPAL statistics
-   * @param {number} ipalId - IPAL ID
-   * @returns {Promise<Object>} IPAL statistics (sensors, alerts, readings count)
    */
   async getIpalStats(ipalId) {
     try {
@@ -51,6 +43,49 @@ const ipalService = {
       return response.data;
     } catch (error) {
       console.error(`❌ Error fetching IPAL stats ${ipalId}:`, error);
+      throw error;
+    }
+  },
+
+  /**
+   * Create new IPAL
+   * @param {Object} data - { ipal_location, ipal_description, address?, capacity?, contact_person?, contact_phone?, coordinates?, operational_hours? }
+   */
+  async createIpal(data) {
+    try {
+      const response = await api.post("/api/ipals", data);
+      return response;
+    } catch (error) {
+      console.error("❌ Error creating IPAL:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Update IPAL
+   * @param {number} ipalId - IPAL ID
+   * @param {Object} data - Fields to update
+   */
+  async updateIpal(ipalId, data) {
+    try {
+      const response = await api.put(`/api/ipals/${ipalId}`, data);
+      return response;
+    } catch (error) {
+      console.error(`❌ Error updating IPAL ${ipalId}:`, error);
+      throw error;
+    }
+  },
+
+  /**
+   * Delete IPAL (SuperAdmin only)
+   * @param {number} ipalId - IPAL ID
+   */
+  async deleteIpal(ipalId) {
+    try {
+      const response = await api.delete(`/api/ipals/${ipalId}`);
+      return response;
+    } catch (error) {
+      console.error(`❌ Error deleting IPAL ${ipalId}:`, error);
       throw error;
     }
   },

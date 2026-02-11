@@ -9,6 +9,10 @@ import {
   MdLogout,
   MdClose,
   MdWaterDrop,
+  MdDeviceHub,
+  MdPeople,
+  MdAccountTree,
+  MdPerson,
 } from "react-icons/md";
 import { useAuth } from "../../context/AuthContext";
 import LogoutModal from "../ui/LogoutModal";
@@ -16,12 +20,16 @@ import { useActiveAlerts } from "../../hooks/useQueryHooks";
 import { useIPAL } from "../../context/IPALContext";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // ⭐ USE IPAL CONTEXT - Dynamic IPAL ID
   const { currentIpalId } = useIPAL();
+
+  // Role-based access
+  const isAdmin = user?.role === "superadmin" || user?.role === "admin";
+  const isSuperAdmin = user?.role === "superadmin";
 
   // Fetch active alerts count
   const { data: alertsData } = useActiveAlerts(currentIpalId);
@@ -96,7 +104,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           {/* Main Menu */}
           <div className="mb-6">
             <h2 className="px-3 mb-3 text-[10px] font-bold text-cyan-300/70 uppercase tracking-widest">
-              Side Bar
+              SideBar
             </h2>
             <div className="space-y-1">
               <NavItem
@@ -122,6 +130,52 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 to="/reports"
                 icon={<MdAssessment />}
                 label="Reports"
+                onClick={() => setSidebarOpen(false)}
+              />
+            </div>
+          </div>
+
+          {/* Admin Menu - Only for admin & superadmin */}
+          {isAdmin && (
+            <div className="mb-6">
+              <h2 className="px-3 mb-3 text-[10px] font-bold text-cyan-300/70 uppercase tracking-widest">
+                Management
+              </h2>
+              <div className="space-y-1">
+                <NavItem
+                  to="/manage/ipal"
+                  icon={<MdAccountTree />}
+                  label="Manage IPAL"
+                  onClick={() => setSidebarOpen(false)}
+                />
+                <NavItem
+                  to="/manage/sensors"
+                  icon={<MdDeviceHub />}
+                  label="Manage Sensors"
+                  onClick={() => setSidebarOpen(false)}
+                />
+                {isSuperAdmin && (
+                  <NavItem
+                    to="/manage/users"
+                    icon={<MdPeople />}
+                    label="Manage Users"
+                    onClick={() => setSidebarOpen(false)}
+                  />
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Account */}
+          <div className="mb-6">
+            <h2 className="px-3 mb-3 text-[10px] font-bold text-cyan-300/70 uppercase tracking-widest">
+              Account
+            </h2>
+            <div className="space-y-1">
+              <NavItem
+                to="/account"
+                icon={<MdPerson />}
+                label="Account Info"
                 onClick={() => setSidebarOpen(false)}
               />
             </div>

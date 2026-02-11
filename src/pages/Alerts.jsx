@@ -14,17 +14,21 @@ import { useAlertsData } from "../hooks/useQueryHooks";
 import { LoadingScreen } from "../components/ui";
 import { useRealtimeAlerts } from "../hooks/useRealtimeAlerts";
 import { useAlertCount } from "../hooks/useAlertCount";
+import { useIPAL } from "../context/IPALContext";
 
 const Alerts = () => {
+  // ⭐ USE IPAL CONTEXT - Dynamic IPAL ID
+  const { currentIpalId } = useIPAL();
+
   // ⚡ FIRESTORE REAL-TIME - ALL alerts with auto-update
   const {
     activeAlerts: realtimeAlerts,
     isListening,
     error: realtimeError,
-  } = useRealtimeAlerts(1, {
-    maxAlerts: 100, // ✅ Increase limit to get ALL alerts
-    statusFilter: "all", // ✅ Get ALL status (active, acknowledged, resolved)
-    priorityOnly: false, // ✅ Get ALL severity levels
+  } = useRealtimeAlerts(currentIpalId, {
+    maxAlerts: 100,
+    statusFilter: "all",
+    priorityOnly: false,
   });
 
   // 📊 LIGHTWEIGHT - Total counts (FREE - no document reads!)
@@ -32,15 +36,15 @@ const Alerts = () => {
     total: totalAlertCount,
     active: activeAlertCount,
     critical: criticalAlertCount,
-  } = useAlertCount(1);
+  } = useAlertCount(currentIpalId);
 
-  // 🆕 REACT QUERY - Only for stats (optional, can be removed)
+  // 🆕 REACT QUERY - Only for stats (optional)
   const {
     stats,
     isLoading: statsLoading,
     error: apiError,
     refetch: refreshStats,
-  } = useAlertsData(1, false); // Disable polling
+  } = useAlertsData(currentIpalId, false);
 
   // ✅ USE REAL-TIME DATA directly
   const alerts = realtimeAlerts;

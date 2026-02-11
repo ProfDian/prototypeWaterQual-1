@@ -200,6 +200,62 @@ const sensorService = {
       throw error;
     }
   },
+
+  // ========================================
+  // SENSOR CRUD (Admin+)
+  // ========================================
+
+  /**
+   * Create new sensor
+   * @param {Object} data - { ipal_id, sensor_type, sensor_location, sensor_description? }
+   * @returns {Promise<Object>} Created sensor
+   */
+  createSensor: async (data) => {
+    try {
+      console.log("🔧 Creating sensor:", data);
+      const response = await api.post("/api/sensors", data);
+      console.log("✅ Sensor created:", response);
+      return response;
+    } catch (error) {
+      console.error("❌ Failed to create sensor:", error.message);
+      throw error;
+    }
+  },
+
+  /**
+   * Update sensor
+   * @param {string} sensorId - Sensor ID
+   * @param {Object} data - Fields to update
+   * @returns {Promise<Object>} Updated sensor
+   */
+  updateSensor: async (sensorId, data) => {
+    try {
+      console.log(`✏️ Updating sensor ${sensorId}:`, data);
+      const response = await api.put(`/api/sensors/${sensorId}`, data);
+      console.log("✅ Sensor updated:", response);
+      return response;
+    } catch (error) {
+      console.error("❌ Failed to update sensor:", error.message);
+      throw error;
+    }
+  },
+
+  /**
+   * Delete sensor (SuperAdmin only)
+   * @param {string} sensorId - Sensor ID
+   * @returns {Promise<Object>} Delete result
+   */
+  deleteSensor: async (sensorId) => {
+    try {
+      console.log(`🗑️ Deleting sensor ${sensorId}...`);
+      const response = await api.delete(`/api/sensors/${sensorId}`);
+      console.log("✅ Sensor deleted:", response);
+      return response;
+    } catch (error) {
+      console.error("❌ Failed to delete sensor:", error.message);
+      throw error;
+    }
+  },
 };
 
 export default sensorService;

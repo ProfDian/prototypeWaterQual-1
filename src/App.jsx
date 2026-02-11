@@ -21,6 +21,10 @@ const Sensors = lazy(() => import("./pages/Sensors"));
 const SensorDetail = lazy(() => import("./pages/SensorDetail"));
 const Alerts = lazy(() => import("./pages/Alerts"));
 const Reports = lazy(() => import("./pages/Reports"));
+const ManageIPAL = lazy(() => import("./pages/ManageIPAL"));
+const ManageSensor = lazy(() => import("./pages/ManageSensor"));
+const ManageUser = lazy(() => import("./pages/ManageUser"));
+const AccountInfo = lazy(() => import("./pages/AccountInfo"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 function App() {
@@ -52,7 +56,7 @@ function App() {
               // Optional: Show toast notification in UI
               // You can add react-toastify or custom notification here
               alert(
-                `🔔 ${payload.notification.title}\n${payload.notification.body}`
+                `🔔 ${payload.notification.title}\n${payload.notification.body}`,
               );
             });
           } else {
@@ -99,6 +103,12 @@ function App() {
             <Route path="/sensors/:id" element={<SensorDetail />} />
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/reports" element={<Reports />} />
+
+            {/* Admin Management Routes */}
+            <Route path="/manage/ipal" element={<ManageIPAL />} />
+            <Route path="/manage/sensors" element={<ManageSensor />} />
+            <Route path="/manage/users" element={<ManageUser />} />
+            <Route path="/account" element={<AccountInfo />} />
           </Route>
 
           {/* 404 Not Found - catch all */}

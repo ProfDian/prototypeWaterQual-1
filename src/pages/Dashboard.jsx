@@ -159,11 +159,23 @@ const Dashboard = () => {
   const qualityChartData = qualityChartDataRaw?.data || [];
   const historicalData = historicalDataRaw || [];
   const isLoading = isDashboardLoading || isChartLoading;
-  const error = dashboardError; // Locations (lat, lng)
-  const locations = {
+  const error = dashboardError; // Locations from IPAL data (lat, lng) with fallback
+  const defaultLocations = {
     inlet: [-7.050665024868658, 110.44008189915155],
     outlet: [-7.050193776750058, 110.44035712980384],
   };
+  const locations = {
+    inlet: currentIpal?.coordinates?.inlet
+      ? [currentIpal.coordinates.inlet.lat, currentIpal.coordinates.inlet.lng]
+      : defaultLocations.inlet,
+    outlet: currentIpal?.coordinates?.outlet
+      ? [currentIpal.coordinates.outlet.lat, currentIpal.coordinates.outlet.lng]
+      : defaultLocations.outlet,
+  };
+  const mapCenter = [
+    (locations.inlet[0] + locations.outlet[0]) / 2,
+    (locations.inlet[1] + locations.outlet[1]) / 2,
+  ];
 
   // Parameters configuration
   const parameters = [
@@ -387,7 +399,7 @@ const Dashboard = () => {
                 </div>
                 {currentIpal.sensor_count !== undefined && (
                   <p className="text-xs text-gray-500 mt-2">
-                    {currentIpal.sensor_count} sensor(s) terdaftar
+                    {currentIpal.sensor_count} sensor(s) registered
                   </p>
                 )}
               </div>
@@ -892,14 +904,14 @@ const Dashboard = () => {
                     IPAL Location
                   </h3>
                   <p className="text-xs text-gray-600 mt-0.5">
-                    Teknik Lingkungan
+                    {currentIpal?.ipal_location || "IPAL Location"}
                   </p>
                 </div>
               </div>
             </div>
             <div className="h-[calc(100%-65px)]">
               <MapContainer
-                center={[-7.0506, 110.4397]}
+                center={mapCenter}
                 zoom={18}
                 style={{ height: "100%", width: "100%" }}
               >

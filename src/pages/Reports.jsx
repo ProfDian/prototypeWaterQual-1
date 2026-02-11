@@ -14,8 +14,11 @@ import {
 } from "react-icons/md";
 import reportService from "../services/reportService";
 import { InlineLoader } from "../components/ui";
+import { useIPAL } from "../context/IPALContext";
 
 const Reports = () => {
+  // ⭐ USE IPAL CONTEXT - Dynamic IPAL ID
+  const { currentIpalId, currentIpal } = useIPAL();
   // State
   const [datePreset, setDatePreset] = useState("last7Days");
   const [customDateRange, setCustomDateRange] = useState({
@@ -98,7 +101,7 @@ const Reports = () => {
 
       const validation = reportService.validateDateRange(
         dateRange.start,
-        dateRange.end
+        dateRange.end,
       );
 
       if (!validation.valid) {
@@ -115,6 +118,7 @@ const Reports = () => {
       const previewData = await reportService.previewReport({
         start_date: dateRange.start,
         end_date: dateRange.end,
+        ipal_id: currentIpalId,
         parameters: selectedParameters.join(","),
         location: selectedLocation,
       });
@@ -146,7 +150,7 @@ const Reports = () => {
 
       const validation = reportService.validateDateRange(
         dateRange.start,
-        dateRange.end
+        dateRange.end,
       );
 
       if (!validation.valid) {
@@ -159,6 +163,7 @@ const Reports = () => {
         format,
         start_date: dateRange.start,
         end_date: dateRange.end,
+        ipal_id: currentIpalId,
         parameters: selectedParameters.join(","),
         location: selectedLocation,
       });

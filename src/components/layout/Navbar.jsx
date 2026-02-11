@@ -240,52 +240,6 @@ const Navbar = ({ setSidebarOpen }) => {
                   </p>
                 </div>
               </button>
-
-              {/* Profile Dropdown */}
-              {profileMenuOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200/80 overflow-hidden animate-fadeIn">
-                  <div className="px-4 py-4 border-b border-slate-200/80 bg-gradient-to-br from-blue-50/50 to-cyan-50/50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-white flex-shrink-0">
-                        <span className="text-base font-bold text-white">
-                          {user?.email?.[0]?.toUpperCase() || "U"}
-                        </span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-slate-900 truncate">
-                          {user?.username ||
-                            user?.email?.split("@")[0] ||
-                            "User"}
-                        </p>
-                        <p className="text-xs text-slate-600 truncate font-mono">
-                          {user?.email || ""}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="py-2">
-                    <MenuItem
-                      icon={<FaUser className="w-4 h-4" />}
-                      label="Profile Settings"
-                    />
-                    <MenuItem
-                      icon={<IoMdSettings className="w-4 h-4" />}
-                      label="Preferences"
-                    />
-                  </div>
-
-                  <div className="border-t border-slate-200/80 py-2">
-                    <button
-                      onClick={handleLogoutClick}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 transition-all duration-200 group"
-                    >
-                      <MdLogout className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                      <span className="text-sm font-semibold">Logout</span>
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
