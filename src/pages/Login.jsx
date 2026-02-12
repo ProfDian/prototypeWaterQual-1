@@ -71,6 +71,7 @@ const Login = () => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
+    console.log("🔐 TA-Client: Login attempt started");
 
     try {
       await login(email, password);
