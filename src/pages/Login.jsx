@@ -288,33 +288,6 @@ const Login = () => {
 
           {/* Login Card */}
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sm:p-10 md:p-12 border border-white/50">
-            {/* Token Expired Warning Banner */}
-            {isTokenExpired && (
-              <div className="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg animate-pulse">
-                <div className="flex items-start">
-                  <svg
-                    className="w-5 h-5 text-yellow-500 mr-3 flex-shrink-0 mt-0.5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <div>
-                    <h4 className="text-sm font-bold text-yellow-900 mb-1">
-                      🔒 Session Expired
-                    </h4>
-                    <p className="text-sm text-yellow-700">
-                      Your session has expired. Please login again to continue.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Notification Message Banner */}
             {showLoginRequiredMessage && (
               <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg">

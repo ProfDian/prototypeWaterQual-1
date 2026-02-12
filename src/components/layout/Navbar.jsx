@@ -1,9 +1,7 @@
 // src/components/layout/Navbar.jsx
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdMenu, MdLogout, MdWaterDrop, MdClose } from "react-icons/md";
-import { IoMdSettings } from "react-icons/io";
-import { FaUser } from "react-icons/fa";
+import { MdMenu, MdClose } from "react-icons/md";
 import { Bell, BellDot, AlertTriangle } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import LogoutModal from "../ui/LogoutModal";
@@ -27,7 +25,7 @@ const Navbar = ({ setSidebarOpen }) => {
   const ipalId = selectedIPAL || 1;
 
   // 🔥 Real-time alerts from Firestore
-  const { activeAlerts, alertCount, criticalCount, highCount, isListening } =
+  const { activeAlerts, alertCount, criticalCount, isListening } =
     useRealtimeAlerts(ipalId, {
       maxAlerts: 5,
       statusFilter: "active",
@@ -61,10 +59,6 @@ const Navbar = ({ setSidebarOpen }) => {
     navigate("/login"); // Redirect to login page
   };
 
-  const handleLogoutClick = () => {
-    setShowLogoutModal(true);
-  };
-
   return (
     <header className="relative z-10 bg-gradient-to-r from-white/95 via-cyan-50/90 to-blue-50/95 backdrop-blur-xl shadow-lg shadow-cyan-500/5">
       {/* Border bottom */}
@@ -85,18 +79,20 @@ const Navbar = ({ setSidebarOpen }) => {
 
             {/* Logo & Title - Desktop */}
             <div className="hidden lg:flex items-center gap-3">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg blur-sm opacity-40"></div>
-                <div className="relative p-2 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg shadow-md">
-                  <MdWaterDrop className="w-6 h-6 text-white" />
-                </div>
+              <div className="relative flex-shrink-0">
+                <img
+                  src="/LogoIPAL.png"
+                  alt="Logo IPAL"
+                  className="w-10 h-10 object-contain rounded-lg shadow-md"
+                />
               </div>
               <div>
                 <h2 className="text-xl font-bold bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent tracking-tight">
-                  Water Quality Dashboard
+                  IPAL Monitor
                 </h2>
                 <p className="text-xs text-cyan-600 font-semibold">
-                  💧 Real-time monitoring system
+                  Department of Environmental Engineering - Diponegoro
+                  University
                 </p>
               </div>
             </div>
@@ -104,10 +100,11 @@ const Navbar = ({ setSidebarOpen }) => {
             {/* Logo & Title - Mobile/Tablet */}
             <div className="flex lg:hidden items-center gap-2 min-w-0">
               <div className="relative flex-shrink-0">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg blur-sm opacity-40"></div>
-                <div className="relative p-1.5 sm:p-2 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg shadow-md">
-                  <MdWaterDrop className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                </div>
+                <img
+                  src="/LogoIPAL.png"
+                  alt="Logo IPAL"
+                  className="w-8 h-8 sm:w-9 sm:h-9 object-contain rounded-lg shadow-md"
+                />
               </div>
               <div className="min-w-0 flex-1">
                 <h1 className="text-sm sm:text-base font-bold text-slate-900 truncate">
@@ -259,18 +256,6 @@ const Navbar = ({ setSidebarOpen }) => {
     </header>
   );
 };
-
-const MenuItem = ({ icon, label, onClick }) => (
-  <button
-    onClick={onClick}
-    className="w-full flex items-center space-x-3 px-4 py-2.5 text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 group"
-  >
-    <span className="text-slate-600 group-hover:text-slate-900 transition-colors">
-      {icon}
-    </span>
-    <span className="text-sm font-medium">{label}</span>
-  </button>
-);
 
 const NotificationItem = ({ alert, onClick }) => {
   const getSeverityColor = (severity) => {

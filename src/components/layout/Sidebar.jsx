@@ -8,7 +8,6 @@ import {
   MdAssessment,
   MdLogout,
   MdClose,
-  MdWaterDrop,
   MdDeviceHub,
   MdPeople,
   MdAccountTree,
@@ -75,17 +74,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           <div className="relative flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="relative flex-shrink-0">
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl blur-md opacity-50"></div>
-                <div className="relative p-2 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl shadow-xl ring-2 ring-cyan-400/30">
-                  <MdWaterDrop className="w-6 h-6 text-white drop-shadow-lg" />
-                </div>
+                <img
+                  src="/LogoIPAL.png"
+                  alt="Logo IPAL"
+                  className="w-10 h-10 object-contain rounded-xl shadow-xl ring-2 ring-cyan-400/30"
+                />
               </div>
               <div className="flex-1 min-w-0">
                 <h1 className="text-lg font-bold text-white tracking-tight">
                   IPAL Monitor
                 </h1>
                 <p className="text-xs text-cyan-300/90 font-medium">
-                  Teknik Lingkungan Universitas Diponegoro
+                  Department of Environmental Engineering - Diponegoro
+                  University
                 </p>
               </div>
             </div>
