@@ -145,7 +145,7 @@ const Navbar = ({ setSidebarOpen }) => {
 
               {/* Notifications Dropdown */}
               {notifMenuOpen && (
-                <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 max-w-sm bg-white rounded-2xl shadow-2xl border border-slate-200/80 overflow-hidden animate-fadeIn">
+                <div className="fixed inset-x-0 top-[60px] mx-2 sm:absolute sm:inset-x-auto sm:top-auto sm:mx-0 sm:right-0 sm:mt-2 sm:w-80 sm:max-w-sm bg-white rounded-2xl shadow-2xl border border-slate-200/80 overflow-hidden animate-fadeIn z-50">
                   <div className="px-4 py-3.5 border-b border-slate-200/80 bg-gradient-to-r from-blue-50/50 to-cyan-50/50 flex items-center justify-between">
                     <div>
                       <h3 className="text-sm font-bold text-slate-900">

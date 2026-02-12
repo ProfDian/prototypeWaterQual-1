@@ -52,7 +52,7 @@ const AlertGroupCard = ({
   const location = firstAlert.location || "outlet";
   const allResolved = alertGroup.alerts.every((a) => a.status === "resolved");
   const allAcknowledged = alertGroup.alerts.every(
-    (a) => a.status === "acknowledged" || a.status === "resolved"
+    (a) => a.status === "acknowledged" || a.status === "resolved",
   );
   const hasActiveAlerts = alertGroup.alerts.some((a) => a.status === "active");
 
@@ -142,32 +142,32 @@ const AlertGroupCard = ({
       >
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            {/* ⭐ Main Title - Date & Time (BIG) */}
-            <div className="flex items-center space-x-3">
-              <h3 className="text-xl font-bold text-gray-900">
-                {format(latestTimestamp, "EEEE, dd MMMM yyyy")}
+            {/* ⭐ Main Title - Date & Time */}
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-base sm:text-xl font-bold text-gray-900">
+                {format(latestTimestamp, "dd MMM yyyy")}
               </h3>
               <span
-                className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase ${styles.badge}`}
+                className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase ${styles.badge}`}
               >
                 {highestSeverity}
               </span>
               {allResolved && (
-                <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                <span className="px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-green-100 text-green-800">
                   <CheckCircle className="h-3 w-3 inline mr-1" />
                   Resolved
                 </span>
               )}
             </div>
 
-            {/* ⭐ Subtitle - Time + Details (smaller) */}
-            <div className="mt-1.5 flex items-center space-x-3 text-sm text-gray-600">
+            {/* ⭐ Subtitle - Time + Details (smaller, wrappable) */}
+            <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-gray-600">
               <span className="flex items-center font-medium">
                 <Clock className="h-3.5 w-3.5 mr-1" />
                 {format(latestTimestamp, "HH:mm:ss")}
               </span>
-              <span className="text-gray-400">•</span>
-              <span className="text-xs text-gray-500">
+              <span className="text-gray-400 hidden sm:inline">•</span>
+              <span className="text-xs text-gray-500 hidden sm:inline">
                 Reading #{alertGroup.reading_id.slice(-8)}
               </span>
               <span className="text-gray-400">•</span>
@@ -217,25 +217,25 @@ const AlertGroupCard = ({
                 </div>
 
                 {/* Violation Info */}
-                <div className="ml-3 flex-1">
-                  <div className="flex items-center justify-between">
+                <div className="ml-3 flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center justify-between gap-1">
                     <h4 className="text-sm font-semibold text-gray-900">
                       {alert.parameter?.toUpperCase()}
                     </h4>
                     <div className="flex space-x-1">
                       <span
-                        className={`px-2 py-0.5 rounded text-xs font-medium ${
+                        className={`px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-medium ${
                           alert.status === "active"
                             ? "bg-red-100 text-red-700"
                             : alert.status === "acknowledged"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-green-100 text-green-700"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-green-100 text-green-700"
                         }`}
                       >
                         {alert.status}
                       </span>
                       <span
-                        className={`px-2 py-0.5 rounded text-xs font-medium ${
+                        className={`px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-medium ${
                           getSeverityStyles(alert.severity).badge
                         }`}
                       >
@@ -244,9 +244,11 @@ const AlertGroupCard = ({
                     </div>
                   </div>
 
-                  <p className="mt-1 text-sm text-gray-600">{alert.message}</p>
+                  <p className="mt-1 text-xs sm:text-sm text-gray-600 break-words">
+                    {alert.message}
+                  </p>
 
-                  <div className="mt-2 flex items-center space-x-4 text-xs text-gray-500">
+                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
                     <span className="font-medium">
                       Value: <span className="text-red-600">{alert.value}</span>
                     </span>
@@ -263,7 +265,7 @@ const AlertGroupCard = ({
           {/* Actions */}
           {!allResolved && (
             <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
-              <div className="flex space-x-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 {hasActiveAlerts && (
                   <button
                     onClick={(e) => {

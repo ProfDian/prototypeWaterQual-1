@@ -270,26 +270,26 @@ const SensorDetail = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary-50 to-primary-100 rounded-lg p-6 border border-primary-200">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+      <div className="bg-gradient-to-r from-primary-50 to-primary-100 rounded-lg p-4 sm:p-6 border border-primary-200">
+        <div className="flex items-start sm:items-center justify-between gap-3">
+          <div className="flex items-start sm:items-center space-x-3 sm:space-x-4 min-w-0">
             <Link
               to="/sensors"
-              className="p-2 rounded-lg bg-white text-gray-600 hover:bg-gray-50 shadow-sm transition"
+              className="p-2 rounded-lg bg-white text-gray-600 hover:bg-gray-50 shadow-sm transition flex-shrink-0"
             >
               <MdArrowBack className="h-5 w-5" />
             </Link>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">
+            <div className="min-w-0">
+              <h2 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
                 {getSensorTypeLabel(sensor.sensor_type)}
               </h2>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-xs sm:text-sm text-gray-600 mt-1 truncate">
                 {sensor.sensor_description}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
             {getStatusBadge(sensor.status)}
             <button
               onClick={handleRefresh}
@@ -303,7 +303,7 @@ const SensorDetail = () => {
 
       {/* Tabs */}
       <div className="border-b border-gray-200 bg-white rounded-t-lg">
-        <nav className="-mb-px flex space-x-8 px-6">
+        <nav className="-mb-px flex space-x-4 sm:space-x-8 px-3 sm:px-6 overflow-x-auto">
           {["overview", "statistics", "history", "info"].map((tab) => (
             <button
               key={tab}
@@ -314,9 +314,6 @@ const SensorDetail = () => {
               }`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab === "history" && (
-                <MdOutlineHistory className="inline mr-2" />
-              )}
               {tab}
             </button>
           ))}
@@ -361,7 +358,7 @@ const SensorDetail = () => {
                         {
                           dateStyle: "medium",
                           timeStyle: "short",
-                        }
+                        },
                       )}
                     </div>
 
@@ -639,7 +636,7 @@ const SensorDetail = () => {
                                   {
                                     dateStyle: "medium",
                                     timeStyle: "short",
-                                  }
+                                  },
                                 )}
                               </div>
                             </td>
@@ -753,7 +750,7 @@ const SensorDetail = () => {
                         "id-ID",
                         {
                           dateStyle: "medium",
-                        }
+                        },
                       )}
                     </p>
                   </div>

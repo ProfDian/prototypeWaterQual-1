@@ -116,15 +116,17 @@ const Alerts = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800">Alerts</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
+            Alerts
+          </h2>
           {lastUpdate && (
-            <p className="text-sm text-gray-500 mt-1 flex items-center">
-              <Clock className="h-4 w-4 mr-1" />
+            <p className="text-xs sm:text-sm text-gray-500 mt-1 flex items-center flex-wrap gap-1">
+              <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
               Last updated: {format(lastUpdate, "HH:mm:ss")}
               {isListening && (
-                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                   <span className="animate-pulse mr-1">●</span> Live
                 </span>
               )}
@@ -137,21 +139,22 @@ const Alerts = () => {
           <button
             onClick={handleRefresh}
             disabled={statsLoading}
-            className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-100 hover:shadow-md transition-all disabled:opacity-50"
+            className="flex items-center px-3 sm:px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-100 hover:shadow-md transition-all disabled:opacity-50"
           >
             <RefreshCw
-              className={`mr-2 h-5 w-5 ${statsLoading ? "animate-spin" : ""}`}
+              className={`mr-1.5 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 ${statsLoading ? "animate-spin" : ""}`}
             />
-            Refresh Stats
+            <span className="hidden sm:inline">Refresh Stats</span>
+            <span className="sm:hidden">Refresh</span>
           </button>
 
           {/* Filter Button */}
           <div className="relative">
             <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-100 hover:shadow-md transition-all"
+              className="flex items-center px-3 sm:px-4 py-2 bg-white border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-100 hover:shadow-md transition-all"
             >
-              <Filter className="mr-2 h-5 w-5 text-gray-500" />
+              <Filter className="mr-1.5 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
               Filter
             </button>
 
@@ -214,7 +217,7 @@ const Alerts = () => {
       )}
 
       {/* Summary Cards - Real-time counts */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         <div className="bg-white shadow-md hover:shadow-lg transition rounded-2xl p-4 flex items-center">
           <div className="flex-shrink-0 rounded-full bg-blue-100 p-4">
             <AlertTriangle className="h-7 w-7 text-blue-600" />

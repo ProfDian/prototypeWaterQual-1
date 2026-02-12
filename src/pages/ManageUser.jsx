@@ -346,64 +346,110 @@ const ManageUser = () => {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b">
-              <tr>
-                <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
-                </th>
-                <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
-                </th>
-                <th className="text-right px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {users.map((u) => (
-                <tr key={u.uid} className="hover:bg-gray-50">
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 bg-cyan-100 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-semibold text-cyan-700">
-                          {(u.username || u.email || "?")
-                            .charAt(0)
-                            .toUpperCase()}
+          {/* Desktop Table */}
+          <div className="hidden sm:block overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    User
+                  </th>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Role
+                  </th>
+                  <th className="text-right px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {users.map((u) => (
+                  <tr key={u.uid} className="hover:bg-gray-50">
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 bg-cyan-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-sm font-semibold text-cyan-700">
+                            {(u.username || u.email || "?")
+                              .charAt(0)
+                              .toUpperCase()}
+                          </span>
+                        </div>
+                        <span className="text-sm font-medium text-gray-900">
+                          {u.username || "-"}
                         </span>
                       </div>
-                      <span className="text-sm font-medium text-gray-900">
-                        {u.username || "-"}
+                    </td>
+                    <td className="px-5 py-4 text-sm text-gray-600">
+                      {u.email}
+                    </td>
+                    <td className="px-5 py-4">
+                      <span
+                        className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${getRoleBadge(u.role)}`}
+                      >
+                        {getRoleIcon(u.role)}
+                        {u.role}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 text-right">
+                      {u.role !== "superadmin" &&
+                        u.uid !== currentUser?.uid && (
+                          <button
+                            onClick={() => setDeleteConfirm(u)}
+                            className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 mr-1" />
+                            Delete
+                          </button>
+                        )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card Layout */}
+          <div className="sm:hidden divide-y divide-gray-100">
+            {users.map((u) => (
+              <div key={u.uid} className="p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 bg-cyan-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-semibold text-cyan-700">
+                        {(u.username || u.email || "?").charAt(0).toUpperCase()}
                       </span>
                     </div>
-                  </td>
-                  <td className="px-5 py-4 text-sm text-gray-600">{u.email}</td>
-                  <td className="px-5 py-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${getRoleBadge(u.role)}`}
-                    >
-                      {getRoleIcon(u.role)}
-                      {u.role}
-                    </span>
-                  </td>
-                  <td className="px-5 py-4 text-right">
-                    {u.role !== "superadmin" && u.uid !== currentUser?.uid && (
-                      <button
-                        onClick={() => setDeleteConfirm(u)}
-                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 mr-1" />
-                        Delete
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {u.username || "-"}
+                      </p>
+                      <p className="text-xs text-gray-500 truncate">
+                        {u.email}
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full flex-shrink-0 ${getRoleBadge(u.role)}`}
+                  >
+                    {getRoleIcon(u.role)}
+                    {u.role}
+                  </span>
+                </div>
+                {u.role !== "superadmin" && u.uid !== currentUser?.uid && (
+                  <button
+                    onClick={() => setDeleteConfirm(u)}
+                    className="w-full inline-flex items-center justify-center px-3 py-2 text-xs font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 mr-1" />
+                    Delete User
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
