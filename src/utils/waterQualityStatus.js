@@ -42,19 +42,8 @@ export const getParameterStatus = (paramKey, value, location = "outlet") => {
 
 /**
  * Get status color classes for UI components
+ * Uses centralized statusConfig as single source of truth.
  * @param {string} status - Status string
  * @returns {string} Tailwind CSS classes
  */
-export const getStatusColor = (status) => {
-  if (!status) return "bg-gray-100 text-gray-700 border-gray-300";
-
-  const statusMap = {
-    Excellent: "bg-emerald-50 text-emerald-700 border-emerald-300",
-    Good: "bg-green-50 text-green-700 border-green-300",
-    Fair: "bg-yellow-50 text-yellow-700 border-yellow-300",
-    Poor: "bg-orange-50 text-orange-700 border-orange-300",
-    "Very Poor": "bg-red-50 text-red-700 border-red-300",
-  };
-
-  return statusMap[status] || "bg-gray-100 text-gray-700 border-gray-300";
-};
+export { getQualityColor as getStatusColor } from "./statusConfig";

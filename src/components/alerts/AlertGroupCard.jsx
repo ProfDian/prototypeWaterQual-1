@@ -18,6 +18,10 @@ import {
   CheckCircle,
   Check,
 } from "lucide-react";
+import {
+  getSeverityStyles,
+  getAlertStatusColor,
+} from "../../utils/statusConfig";
 import { format } from "date-fns";
 
 const AlertGroupCard = ({
@@ -54,40 +58,6 @@ const AlertGroupCard = ({
     (a) => a.status === "acknowledged" || a.status === "resolved",
   );
   const hasActiveAlerts = alertGroup.alerts.some((a) => a.status === "active");
-
-  // Severity styling
-  const getSeverityStyles = (severity) => {
-    switch (severity) {
-      case "critical":
-        return {
-          border: "border-l-4 border-red-500",
-          bg: "bg-red-50",
-          badge: "bg-red-100 text-red-800",
-          icon: "bg-red-100 text-red-600",
-        };
-      case "high":
-        return {
-          border: "border-l-4 border-orange-500",
-          bg: "bg-orange-50",
-          badge: "bg-orange-100 text-orange-800",
-          icon: "bg-orange-100 text-orange-600",
-        };
-      case "medium":
-        return {
-          border: "border-l-4 border-yellow-500",
-          bg: "bg-yellow-50",
-          badge: "bg-yellow-100 text-yellow-800",
-          icon: "bg-yellow-100 text-yellow-600",
-        };
-      default:
-        return {
-          border: "border-l-4 border-blue-500",
-          bg: "bg-blue-50",
-          badge: "bg-blue-100 text-blue-800",
-          icon: "bg-blue-100 text-blue-600",
-        };
-    }
-  };
 
   const styles = getSeverityStyles(highestSeverity);
 
@@ -221,13 +191,9 @@ const AlertGroupCard = ({
                     </h4>
                     <div className="flex space-x-1">
                       <span
-                        className={`px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-medium ${
-                          alert.status === "active"
-                            ? "bg-red-100 text-red-700"
-                            : alert.status === "acknowledged"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-green-100 text-green-700"
-                        }`}
+                        className={`px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-medium ${getAlertStatusColor(
+                          alert.status,
+                        )}`}
                       >
                         {alert.status}
                       </span>

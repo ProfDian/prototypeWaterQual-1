@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import sensorService from "../services/sensorServices";
 import ipalService from "../services/ipalService";
+import { getEntityStatusColor } from "../utils/statusConfig";
 import { useAuth } from "../context/AuthContext";
 import { LoadingScreen } from "../components/ui";
 
@@ -494,13 +495,7 @@ const ManageSensor = () => {
                     </div>
                   </div>
                   <span
-                    className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                      sensor.status === "active"
-                        ? "bg-green-100 text-green-700"
-                        : sensor.status === "maintenance"
-                          ? "bg-yellow-100 text-yellow-700"
-                          : "bg-gray-100 text-gray-600"
-                    }`}
+                    className={`text-xs font-medium px-2 py-0.5 rounded-full ${getEntityStatusColor(sensor.status)}`}
                   >
                     {sensor.status}
                   </span>

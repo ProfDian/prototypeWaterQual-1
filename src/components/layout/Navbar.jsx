@@ -8,6 +8,7 @@ import LogoutModal from "../ui/LogoutModal";
 import IPALSelector from "../ipal/IPALSelector";
 import { useRealtimeAlerts } from "../../hooks/useRealtimeAlerts";
 import { useIPAL } from "../../context/IPALContext";
+import { getSeverityColor } from "../../utils/statusConfig";
 import { format } from "date-fns";
 
 const Navbar = ({ setSidebarOpen }) => {
@@ -258,21 +259,6 @@ const Navbar = ({ setSidebarOpen }) => {
 };
 
 const NotificationItem = ({ alert, onClick }) => {
-  const getSeverityColor = (severity) => {
-    switch (severity) {
-      case "critical":
-        return "text-red-600 bg-red-50";
-      case "high":
-        return "text-orange-600 bg-orange-50";
-      case "medium":
-        return "text-yellow-600 bg-yellow-50";
-      case "low":
-        return "text-blue-600 bg-blue-50";
-      default:
-        return "text-slate-600 bg-slate-50";
-    }
-  };
-
   const getSeverityIcon = (severity) => {
     if (severity === "critical" || severity === "high") {
       return <AlertTriangle className="w-4 h-4" />;
