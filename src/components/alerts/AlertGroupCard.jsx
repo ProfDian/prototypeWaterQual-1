@@ -14,7 +14,6 @@ import {
   Droplet,
   Thermometer,
   Waves,
-  Eye,
   AlertTriangle,
   CheckCircle,
   Check,
@@ -104,8 +103,6 @@ const AlertGroupCard = ({
         return <Thermometer className={iconClass} />;
       case "tds":
         return <Waves className={iconClass} />;
-      case "turbidity":
-        return <Eye className={iconClass} />;
       default:
         return <AlertTriangle className={iconClass} />;
     }

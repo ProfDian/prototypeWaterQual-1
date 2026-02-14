@@ -8,7 +8,6 @@ import {
   Droplet,
   Thermometer,
   Waves,
-  Eye,
   RefreshCw,
   MapPin,
   Activity,
@@ -188,13 +187,6 @@ const Dashboard = () => {
       color: "#ef4444",
     },
     { name: "TDS", key: "tds", unit: "ppm", icon: Waves, color: "#8b5cf6" },
-    {
-      name: "Turbidity",
-      key: "turbidity",
-      unit: "NTU",
-      icon: Eye,
-      color: "#f59e0b",
-    },
   ];
 
   // Location dropdown options

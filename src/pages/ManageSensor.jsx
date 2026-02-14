@@ -12,7 +12,6 @@ import {
   Activity,
   Droplets,
   Thermometer,
-  Eye,
 } from "lucide-react";
 import sensorService from "../services/sensorServices";
 import ipalService from "../services/ipalService";
@@ -31,12 +30,6 @@ const SENSOR_TYPES = [
     label: "TDS",
     icon: Activity,
     color: "text-green-600 bg-green-100",
-  },
-  {
-    value: "turbidity",
-    label: "Turbidity",
-    icon: Eye,
-    color: "text-amber-600 bg-amber-100",
   },
   {
     value: "temperature",

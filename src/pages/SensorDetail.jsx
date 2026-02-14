@@ -142,7 +142,6 @@ const SensorDetail = () => {
     const thresholds = {
       ph: { min: 6, max: 9, label: "Normal range: 6-9" },
       tds: { max: 500, label: "Max threshold: 500 ppm" },
-      turbidity: { max: 5, label: "Max threshold: 5 NTU" },
       temperature: { min: 20, max: 35, label: "Normal range: 20-35°C" },
     };
 
@@ -208,7 +207,6 @@ const SensorDetail = () => {
     const labels = {
       ph: "pH",
       tds: "TDS (Total Dissolved Solids)",
-      turbidity: "Turbidity",
       temperature: "Temperature",
     };
     return labels[type] || type;
@@ -218,7 +216,6 @@ const SensorDetail = () => {
     const units = {
       ph: "",
       tds: "ppm",
-      turbidity: "NTU",
       temperature: "°C",
     };
     return units[type] || "";
@@ -522,8 +519,6 @@ const SensorDetail = () => {
                         "pH normal range: 6-9. Values outside this range may indicate water quality issues."}
                       {sensor.sensor_type === "tds" &&
                         "TDS should be below 500 ppm for safe water quality."}
-                      {sensor.sensor_type === "turbidity" &&
-                        "Turbidity should be below 5 NTU for clear water."}
                       {sensor.sensor_type === "temperature" &&
                         "Temperature normal range: 20-35°C for optimal treatment processes."}
                     </p>
@@ -611,7 +606,6 @@ const SensorDetail = () => {
                         const thresholds = {
                           ph: { min: 6, max: 9 },
                           tds: { max: 500 },
-                          turbidity: { max: 5 },
                           temperature: { min: 20, max: 35 },
                         };
                         const threshold = thresholds[sensor.sensor_type];

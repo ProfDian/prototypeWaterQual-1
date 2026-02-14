@@ -5,7 +5,7 @@
 
 /**
  * Get status for individual water quality parameter
- * @param {string} paramKey - Parameter key (ph, temperature, tds, turbidity)
+ * @param {string} paramKey - Parameter key (ph, temperature, tds)
  * @param {number} value - Parameter value
  * @param {string} location - Location (inlet or outlet)
  * @returns {string|null} Status (Excellent, Good, Fair, Poor, Very Poor)
@@ -32,14 +32,6 @@ export const getParameterStatus = (paramKey, value, location = "outlet") => {
       if (value > tdsThreshold) return "Poor";
       if (value <= tdsThreshold * 0.5) return "Excellent";
       if (value <= tdsThreshold * 0.75) return "Good";
-      return "Fair";
-
-    case "turbidity":
-      const turbidityThreshold = location === "outlet" ? 25 : 400;
-      if (value > turbidityThreshold * 1.5) return "Very Poor";
-      if (value > turbidityThreshold) return "Poor";
-      if (value <= turbidityThreshold * 0.3) return "Excellent";
-      if (value <= turbidityThreshold * 0.6) return "Good";
       return "Fair";
 
     default:

@@ -187,7 +187,7 @@ const Alerts = () => {
                   <p className="px-4 pb-1 text-xs font-semibold text-gray-500 uppercase">
                     Parameter
                   </p>
-                  {["all", "ph", "temperature", "tds", "turbidity"].map((p) => (
+                  {["all", "ph", "temperature", "tds"].map((p) => (
                     <button
                       key={p}
                       onClick={() => setParameterFilter(p)}

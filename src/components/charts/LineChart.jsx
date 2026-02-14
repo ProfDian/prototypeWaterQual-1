@@ -235,7 +235,7 @@ const LineChart = ({
   const getYAxisDomain = () => {
     try {
       const allValues = data.flatMap((item) =>
-        lines.map((line) => item[line.dataKey]).filter((v) => v != null)
+        lines.map((line) => item[line.dataKey]).filter((v) => v != null),
       );
 
       if (allValues.length === 0) return ["auto", "auto"];
@@ -413,13 +413,13 @@ export default LineChart;
  *
  * <LineChart
  *   data={readings}
- *   dataKey="turbidity"
- *   name="Turbidity"
- *   color="#f59e0b"
- *   unit="NTU"
+ *   dataKey="tds"
+ *   name="TDS"
+ *   color="#8b5cf6"
+ *   unit="ppm"
  *   thresholds={[
- *     { label: "Max Limit", value: 5, color: "#ef4444" },
- *     { label: "Target", value: 1, color: "#10b981" }
+ *     { label: "Max Limit", value: 500, color: "#ef4444" },
+ *     { label: "Target", value: 250, color: "#10b981" }
  *   ]}
  * />
  *
