@@ -21,17 +21,18 @@ export const getParameterStatus = (paramKey, value, location = "outlet") => {
       return "Good";
 
     case "temperature":
-      if (value < 20 || value > 38) return "Poor";
-      if (value > 35) return "Fair";
-      if (value >= 20 && value <= 30) return "Excellent";
-      return "Good";
+      if (value > 40) return "Very Poor";
+      if (value > 35) return "Poor";
+      if (value >= 25 && value <= 30) return "Excellent";
+      if (value >= 20 && value <= 35) return "Good";
+      return "Fair";
 
     case "tds":
-      const tdsThreshold = location === "outlet" ? 1000 : 2000;
+      const tdsThreshold = location === "outlet" ? 4000 : 4000;
       if (value > tdsThreshold * 1.2) return "Very Poor";
       if (value > tdsThreshold) return "Poor";
-      if (value <= tdsThreshold * 0.5) return "Excellent";
-      if (value <= tdsThreshold * 0.75) return "Good";
+      if (value <= tdsThreshold * 0.25) return "Excellent";
+      if (value <= tdsThreshold * 0.5) return "Good";
       return "Fair";
 
     default:

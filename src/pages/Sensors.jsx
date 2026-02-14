@@ -176,8 +176,8 @@ const Sensors = () => {
 
     const thresholds = {
       ph: { min: 6, max: 9, label: "6-9" },
-      tds: { max: 500, label: "< 500 ppm" },
-      temperature: { min: 20, max: 35, label: "20-35°C" },
+      tds: { max: 4000, label: "\u2264 4000 mg/L" },
+      temperature: { max: 40, label: "\u2264 40\u00b0C" },
     };
 
     const threshold = thresholds[sensorType];
