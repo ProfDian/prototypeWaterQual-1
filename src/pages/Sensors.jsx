@@ -72,7 +72,6 @@ const Sensors = () => {
     const labels = {
       ph: "pH",
       tds: "TDS",
-      turbidity: "Turbidity",
       temperature: "Temperature",
     };
     return labels[type] || type;
@@ -82,7 +81,6 @@ const Sensors = () => {
     const units = {
       ph: "",
       tds: "ppm",
-      turbidity: "NTU",
       temperature: "°C",
     };
     return units[type] || "";
@@ -141,8 +139,8 @@ const Sensors = () => {
                 isOnline
                   ? "bg-green-500"
                   : isWarning
-                  ? "bg-yellow-500"
-                  : "bg-gray-300"
+                    ? "bg-yellow-500"
+                    : "bg-gray-300"
               }`}
             ></div>
             {isOnline && (
@@ -154,8 +152,8 @@ const Sensors = () => {
               isOnline
                 ? "text-green-700"
                 : isWarning
-                ? "text-yellow-700"
-                : "text-gray-500"
+                  ? "text-yellow-700"
+                  : "text-gray-500"
             }`}
           >
             {isOnline ? "Online" : isWarning ? "Warning" : "Offline"}
@@ -178,9 +176,8 @@ const Sensors = () => {
 
     const thresholds = {
       ph: { min: 6, max: 9, label: "6-9" },
-      tds: { max: 500, label: "< 500 ppm" },
-      turbidity: { max: 5, label: "< 5 NTU" },
-      temperature: { min: 20, max: 35, label: "20-35°C" },
+      tds: { max: 4000, label: "\u2264 4000 mg/L" },
+      temperature: { max: 40, label: "\u2264 40\u00b0C" },
     };
 
     const threshold = thresholds[sensorType];

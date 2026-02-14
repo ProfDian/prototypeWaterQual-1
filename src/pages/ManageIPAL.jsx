@@ -16,6 +16,7 @@ import {
   Clock,
 } from "lucide-react";
 import ipalService from "../services/ipalService";
+import { getEntityStatusColor } from "../utils/statusConfig";
 import { useIPAL } from "../context/IPALContext";
 import { useAuth } from "../context/AuthContext";
 import { LoadingScreen } from "../components/ui";
@@ -640,13 +641,7 @@ const ManageIPAL = () => {
                   </div>
                 </div>
                 <span
-                  className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                    ipal.status === "active"
-                      ? "bg-green-100 text-green-700"
-                      : ipal.status === "maintenance"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-gray-100 text-gray-600"
-                  }`}
+                  className={`text-xs font-medium px-2.5 py-1 rounded-full ${getEntityStatusColor(ipal.status)}`}
                 >
                   {ipal.status}
                 </span>

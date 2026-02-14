@@ -8,6 +8,7 @@
 
 import { ChevronDown, MapPin, Activity, Droplet } from "lucide-react";
 import { useIPAL } from "../../context/IPALContext";
+import { getEntityStatusColor } from "../../utils/statusConfig";
 
 const IPALSelector = () => {
   const { currentIpalId, ipalList, currentIpal, isLoading, switchIpal } =
@@ -136,9 +137,7 @@ const IPALSelector = () => {
                             className={`text-xs px-1.5 py-0.5 rounded ${
                               isActive
                                 ? "bg-white/20 text-white"
-                                : ipal.status === "active"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-gray-100 text-gray-600"
+                                : getEntityStatusColor(ipal.status)
                             }`}
                           >
                             {ipal.status}

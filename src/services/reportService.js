@@ -21,7 +21,7 @@ const reportService = {
         start_date,
         end_date,
         ipal_id = 1,
-        parameters = "ph,tds,turbidity,temperature",
+        parameters = "ph,tds,temperature",
         location = "both",
       } = filters;
 
@@ -67,7 +67,7 @@ const reportService = {
         start_date,
         end_date,
         ipal_id = 1,
-        parameters = "ph,tds,turbidity,temperature",
+        parameters = "ph,tds,temperature",
         location = "both",
       } = options;
 
@@ -117,7 +117,7 @@ const reportService = {
 
         if (contentType && contentType.includes("text/html")) {
           throw new Error(
-            "Backend returned HTML instead of file - check if backend is running!"
+            "Backend returned HTML instead of file - check if backend is running!",
           );
         }
 
@@ -127,7 +127,7 @@ const reportService = {
         }
 
         throw new Error(
-          `Server returned ${response.status}: ${response.statusText}`
+          `Server returned ${response.status}: ${response.statusText}`,
         );
       }
 
@@ -203,7 +203,7 @@ const reportService = {
     const lastMonthStart = new Date(
       today.getFullYear(),
       today.getMonth() - 1,
-      1
+      1,
     );
     const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
 

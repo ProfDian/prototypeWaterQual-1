@@ -28,7 +28,6 @@ const Reports = () => {
   const [selectedParameters, setSelectedParameters] = useState([
     "ph",
     "tds",
-    "turbidity",
     "temperature",
   ]);
   const [selectedLocation, setSelectedLocation] = useState("both");
@@ -45,7 +44,6 @@ const Reports = () => {
   const allParameters = [
     { value: "ph", label: "pH", color: "blue" },
     { value: "tds", label: "TDS", color: "green" },
-    { value: "turbidity", label: "Turbidity", color: "yellow" },
     { value: "temperature", label: "Temperature", color: "red" },
   ];
 

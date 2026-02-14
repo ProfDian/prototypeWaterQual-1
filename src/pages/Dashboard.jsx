@@ -8,7 +8,6 @@ import {
   Droplet,
   Thermometer,
   Waves,
-  Eye,
   RefreshCw,
   MapPin,
   Activity,
@@ -27,6 +26,7 @@ import {
 } from "lucide-react";
 import { LoadingScreen } from "../components/ui";
 import { useIPAL } from "../context/IPALContext";
+import { getEntityStatusColor, getSeverityConfig } from "../utils/statusConfig";
 
 // ⚡ Lazy load heavy components (Charts only - Map components eager loaded to prevent reuse error)
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
@@ -188,13 +188,6 @@ const Dashboard = () => {
       color: "#ef4444",
     },
     { name: "TDS", key: "tds", unit: "ppm", icon: Waves, color: "#8b5cf6" },
-    {
-      name: "Turbidity",
-      key: "turbidity",
-      unit: "NTU",
-      icon: Eye,
-      color: "#f59e0b",
-    },
   ];
 
   // Location dropdown options
@@ -284,35 +277,21 @@ const Dashboard = () => {
         }
       : null;
 
-  // Priority icons and colors
+  // Priority icons and colors — using centralized statusConfig
+  const priorityIcons = {
+    critical: ShieldAlert,
+    high: AlertTriangle,
+    medium: AlertCircle,
+    low: Info,
+  };
   const getPriorityConfig = (priority) => {
-    const configs = {
-      critical: {
-        icon: ShieldAlert,
-        color: "text-red-600",
-        bg: "bg-red-50",
-        border: "border-red-200",
-      },
-      high: {
-        icon: AlertTriangle,
-        color: "text-orange-600",
-        bg: "bg-orange-50",
-        border: "border-orange-200",
-      },
-      medium: {
-        icon: AlertCircle,
-        color: "text-yellow-600",
-        bg: "bg-yellow-50",
-        border: "border-yellow-200",
-      },
-      low: {
-        icon: Info,
-        color: "text-blue-600",
-        bg: "bg-blue-50",
-        border: "border-blue-200",
-      },
+    const sevConfig = getSeverityConfig(priority);
+    return {
+      icon: priorityIcons[priority] || priorityIcons.low,
+      color: sevConfig.tailwind.text,
+      bg: sevConfig.tailwind.bg,
+      border: sevConfig.tailwind.borderAlt,
     };
-    return configs[priority] || configs.low;
   };
 
   // Type icons
@@ -387,11 +366,7 @@ const Dashboard = () => {
                   <span>
                     <strong>Status:</strong>{" "}
                     <span
-                      className={`px-2 py-0.5 rounded text-xs ${
-                        currentIpal.status === "active"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-100 text-gray-600"
-                      }`}
+                      className={`px-2 py-0.5 rounded text-xs ${getEntityStatusColor(currentIpal.status)}`}
                     >
                       {currentIpal.status || "unknown"}
                     </span>

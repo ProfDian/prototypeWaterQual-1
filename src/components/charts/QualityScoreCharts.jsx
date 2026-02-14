@@ -25,16 +25,16 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
+import {
+  getQualityHexMap,
+  getQualityHex,
+  QUALITY_STATUS,
+  QUALITY_THRESHOLDS,
+} from "../../utils/statusConfig";
 
 const QualityScoreChart = ({ data = [], height = 400 }) => {
-  // Status color mapping
-  const statusColors = {
-    excellent: "#00C49F", // Green
-    good: "#0088FE", // Blue
-    fair: "#FFBB28", // Yellow
-    poor: "#FF8042", // Orange
-    critical: "#FF0000", // Red
-  };
+  // Status color mapping — from centralized config
+  const statusColors = getQualityHexMap();
 
   /**
    * Custom Tooltip dengan detail violations
@@ -157,26 +157,21 @@ const QualityScoreChart = ({ data = [], height = 400 }) => {
    */
   const CustomLegend = () => (
     <div className="flex flex-wrap items-center justify-center gap-4 mt-4 text-xs">
-      <div className="flex items-center gap-2">
-        <div className="w-3 h-3 rounded-full bg-[#00C49F]"></div>
-        <span className="text-gray-600">Excellent (85+)</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <div className="w-3 h-3 rounded-full bg-[#0088FE]"></div>
-        <span className="text-gray-600">Good (70-84)</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <div className="w-3 h-3 rounded-full bg-[#FFBB28]"></div>
-        <span className="text-gray-600">Fair (50-69)</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <div className="w-3 h-3 rounded-full bg-[#FF8042]"></div>
-        <span className="text-gray-600">Poor (30-49)</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <div className="w-3 h-3 rounded-full bg-[#FF0000]"></div>
-        <span className="text-gray-600">Critical (&lt;30)</span>
-      </div>
+      {QUALITY_THRESHOLDS.map(({ min, status }) => (
+        <div key={status} className="flex items-center gap-2">
+          <div
+            className="w-3 h-3 rounded-full"
+            style={{ backgroundColor: statusColors[status] }}
+          ></div>
+          <span className="text-gray-600 capitalize">
+            {QUALITY_STATUS[status].label} (
+            {status === "critical"
+              ? `<${QUALITY_THRESHOLDS[QUALITY_THRESHOLDS.length - 2].min}`
+              : `${min}+`}
+            )
+          </span>
+        </div>
+      ))}
     </div>
   );
 
@@ -241,50 +236,50 @@ const QualityScoreChart = ({ data = [], height = 400 }) => {
           {/* Reference Lines untuk Thresholds */}
           <ReferenceLine
             y={85}
-            stroke="#00C49F"
+            stroke={statusColors.excellent}
             strokeDasharray="5 5"
             strokeWidth={1.5}
             label={{
               value: "Excellent",
               position: "right",
               fontSize: 10,
-              fill: "#00C49F",
+              fill: statusColors.excellent,
             }}
           />
           <ReferenceLine
             y={70}
-            stroke="#0088FE"
+            stroke={statusColors.good}
             strokeDasharray="5 5"
             strokeWidth={1}
             label={{
               value: "Good",
               position: "right",
               fontSize: 10,
-              fill: "#0088FE",
+              fill: statusColors.good,
             }}
           />
           <ReferenceLine
             y={50}
-            stroke="#FFBB28"
+            stroke={statusColors.fair}
             strokeDasharray="5 5"
             strokeWidth={1}
             label={{
               value: "Fair",
               position: "right",
               fontSize: 10,
-              fill: "#FFBB28",
+              fill: statusColors.fair,
             }}
           />
           <ReferenceLine
             y={30}
-            stroke="#FF8042"
+            stroke={statusColors.poor}
             strokeDasharray="5 5"
             strokeWidth={1}
             label={{
               value: "Poor",
               position: "right",
               fontSize: 10,
-              fill: "#FF8042",
+              fill: statusColors.poor,
             }}
           />
 
